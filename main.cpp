@@ -2,94 +2,106 @@
 #include <iostream>
 #include <memory>
 #include <vector>
+#include <array>
+#include "Piece_Textures.h"
+#include "Piece.h"
+#include "Pawn.h"
+#include "Constants.h"
 
-class Piece_Textures {
-public:
-    Piece_Textures()
+int scale{};
+
+class Board {
+/*public:
+    Board()
     {
-        std::string path= "Resources/";
-        std::string end = ".png";
-        w_pawn_text->loadFromFile(path + "w_pawn" + end);
-        b_pawn_text->loadFromFile(path + "b_pawn"+ end);
-    }
-    std::shared_ptr<sf::Texture> w_pawn_text = std::make_shared<sf::Texture>();
-    std::shared_ptr<sf::Texture> b_pawn_text = std::make_shared<sf::Texture>();
-};
-class Piece {
+        for (int i = 0; i < numCols; ++i)
+        {
+            for (int j = 0; j < numRows; ++j)
+            {
+                if (i == 1)
+                {
+                    square[i][j] = std::make_shared<Pawn>(false, i, 6, Piece_Textures::w_pawn_text);
+                }
+                if (i == 6)
+                {
+                    square[i][j] = std::make_shared<Pawn>(true, i, 6, Piece_Textures::w_pawn_text);
+                }
+            }
+        }
+    }*/
+
 public:
-    Piece(bool isWhite, int row, int col)
-        : isWhite(isWhite), row(row), col(col) {
-        // Initialize texture and sprite here
-    }
-
-    int row{};
-    int col{};
-   // sf::Texture* texture = new sf::Texture;
-   // std::shared_ptr<sf::Texture> w_texture;
-   // std::shared_ptr<sf::Texture> b_texture;
-    sf::Sprite sprite;
-    bool isWhite{};
+    const int numRows = 8;
+    const int numCols = 8;
+    std::array<std::array<std::shared_ptr<Piece>, 8>, 8 > square;
 };
 
-class Pawn : public Piece {
-public:
-    // Call the base class constructor in the member initializer list
-    Pawn(bool isWhite, int row, int col, std::shared_ptr<sf::Texture> texture)
-        : Piece(isWhite, row, col) {
-        //sf::Texture texture;
-        sprite.setTexture(*texture);
-        //sprite.setRotation(180);
-        sprite.setPosition(sf::Vector2f(row*100, col*100));
-    }
-
-};
 
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(800, 800), "Chess");
-
+    scale = window.getSize().x / 8;
     sf::Texture boardTexture;
     if (!boardTexture.loadFromFile("Resources/Board.png"))
     {
         std::cout << "error loading board texture";
         return 1;
     }
-    sf::Sprite board(boardTexture);
-
+    sf::Sprite board_sprite(boardTexture);
 
     Piece_Textures pieceTextures;
 
-    std::vector<Pawn> w_pawn;
+ /*   std::vector<Pawn> w_pawn;
     std::vector<Pawn> b_pawn;
     for (int i = 0; i < 8; ++i)
     {
         w_pawn.emplace_back(true, i, 6, pieceTextures.w_pawn_text);
         b_pawn.emplace_back(false, i, 1, pieceTextures.b_pawn_text);
+    }*/
+
+    Board board;
+    for (int i = 0; i < 8; ++i)
+    {
+        for (int j = 0; j < 8; ++j) 
+        {
+            if (i == 1)
+            {
+                board.square[i][j] = std::make_shared<Pawn>(false, j, i, pieceTextures.b_pawn_text);
+            }
+            else if (i == 6)
+            {
+                board.square[i][j] = std::make_shared<Pawn>(true, j, i, pieceTextures.w_pawn_text);
+            }
+            else
+            {
+                board.square[i][j] = nullptr;
+            }
+        }
     }
-    
-
-
-    
-
 
     while (window.isOpen())
     {
         sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
                 window.close();
+            }
+            // Other events
         }
 
+        // Game logic
 
         window.clear(sf::Color::Black);
-        window.draw(board);
-        //window.draw(pawn_sprite);
-        //window.draw(pawn.sprite);
-        for (int i = 0; i < 8; i++)
+        window.draw(board_sprite);
+        for (int i = 0; i < 8; ++i)
         {
-            window.draw((w_pawn[i].sprite));
-            window.draw((b_pawn[i].sprite));
+            for (int j = 0; j < 8; ++j)
+            {
+                if (board.square[i][j])
+                {
+                    window.draw(board.square[i][j]->sprite);
+                }
+            }
         }
         window.display();
     }
