@@ -15,6 +15,9 @@ Piece_Textures::Piece_Textures()
     b_rook_text = std::make_shared<sf::Texture>();
     w_queen_text = std::make_shared<sf::Texture>();
     b_queen_text = std::make_shared<sf::Texture>();
+    w_king_text = std::make_shared<sf::Texture>();
+    b_king_text = std::make_shared<sf::Texture>();
+    empty_square = std::make_shared<sf::Texture>();
 
     // Texture loading
     w_pawn_text->loadFromFile(path + "w_pawn" + end);
@@ -27,4 +30,7 @@ Piece_Textures::Piece_Textures()
     b_rook_text->loadFromFile(path + "b_rook" + end);
     w_queen_text->loadFromFile(path + "w_queen" + end);
     b_queen_text->loadFromFile(path + "b_queen" + end);
+    w_king_text->loadFromFile(path + "w_king" + end);
+    b_king_text->loadFromFile(path + "b_king" + end);
+    empty_square->create(100, 100);
 }
