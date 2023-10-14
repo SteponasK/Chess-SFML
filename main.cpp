@@ -7,8 +7,9 @@
 #include "Piece.h"
 #include "Pawn.h"
 #include "Constants.h"
-#include "Square.h"
+#include "Empty_Square.h"
 #include "Board.cpp" //board declared in this file:
+#include "King.h"
 
 int scale{};
 Board board;
@@ -48,35 +49,19 @@ int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judet
     {
         for (int j = 0; j < 8; ++j)
         {
-            if (i == 1)
-            {
-               /* board.square[j][i] = std::make_shared<Pawn>(false, j, i, pieceTextures.b_pawn_text);
-                board.square[j][i]->empty_square = false;*/
-                board.square[j][i] = std::make_shared<Square>(false, j, i, pieceTextures.b_knight_text); // pakeist kad nebutu false
-                board.square[j][i]->empty_square = true;
-            }
-            else if (i == 6)
-            {
-                /*board.square[j][i] = std::make_shared<Pawn>(true, j, i, pieceTextures.w_pawn_text);
-                board.square[j][i]->empty_square = false;*/
-                board.square[j][i] = std::make_shared<Square>(false, j, i, pieceTextures.b_knight_text); // pakeist kad nebutu false
-                board.square[j][i]->empty_square = true;
-            }
-            else
-            {
-                board.square[j][i] = std::make_shared<Square>(false, j, i, pieceTextures.b_knight_text); // pakeist kad nebutu false
-                board.square[j][i]->empty_square = true;                   // pieceTextures.empty_square
-                // kazka su bool isWhite Piece Class constructor padaryt
-            }
+            
             if (i == 7 && j == 4)
             {
-                board.square[j][i] = std::make_shared<Pawn>(true, j, i, pieceTextures.w_king_text);
-                board.square[j][i]->empty_square = false;
+                board.square[j][i] = std::make_shared<Empty_Square>(j, i, true, false, pieceTextures.w_king_text);
+                //board.square[j][i]->empty_square = false;
             }
             else if (i == 0 && j == 4)
             {
-                board.square[j][i] = std::make_shared<Pawn>(false, j, i, pieceTextures.b_king_text);
-                board.square[j][i]->empty_square = false;
+                board.square[j][i] = std::make_shared<Empty_Square>(j, i, false, false, pieceTextures.b_king_text);
+            }
+            else
+            {
+                board.square[j][i] = std::make_shared<Empty_Square>(j, i, false, true, pieceTextures.b_knight_text); // pakeist kad nebutu false
             }
         }
     }
@@ -110,7 +95,7 @@ int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judet
                                 {
                                     if (Turn == 0)
                                     {
-                                        if (!board.square[j][i]->empty_square)
+                                        if (!board.square[j][i]->isEmpty)
                                         {
                                             if (board.square[j][i]->isWhite == true)
                                             {
@@ -120,7 +105,7 @@ int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judet
                                     }
                                     else if (Turn == 1)
                                     {
-                                        if (!board.square[j][i]->empty_square)
+                                        if (!board.square[j][i]->isEmpty)
                                         {
                                             if (board.square[j][i]->isWhite == false)
                                             {
@@ -138,7 +123,7 @@ int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judet
                                 {
                                     if ((selected_square1->isWhite && selected_square2->isWhite)
                                         || (!selected_square1->isWhite && !selected_square2->isWhite &&
-                                            !selected_square2->empty_square))
+                                            !selected_square2->isEmpty))
                                     {
                                         std::cout << "pasikeicia";
                                         selected_square1 = selected_square2;
@@ -161,12 +146,12 @@ int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judet
     //check_legal_move(selected_square1, selected_square2); // sita fnc galima delete
         if (selected_square1)
         {
-            std::cout << "selected_1: " << selected_square1->row + 1 << " " << selected_square1->col + 1 << std::endl;
+            std::cout << "selected_1: " << selected_square1->x + 1 << " " << selected_square1->y + 1 << std::endl;
         }
     if (selected_square1 && selected_square2)
     { 
    
-        selected_square1->move(selected_square1, selected_square2, Turn);
+        selected_square1->move(selected_square2, true, Turn);
         //std::cout << Turn;
       //  board.square[selected_square2->row][selected_square2->col] = selected_square1;
         selected_square1 = nullptr;
@@ -185,7 +170,7 @@ int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judet
             
             if (board.square[i][j])
             {
-                board.square[i][j]->sprite.setPosition(scale * board.square[i][j]->row, scale * board.square[i][j]->col);
+                board.square[i][j]->sprite.setPosition(scale * board.square[i][j]->x, scale * board.square[i][j]->y);
                 window.draw(board.square[i][j]->sprite);
                 //std::cout << board.square[i][j]->isWhite;
             }

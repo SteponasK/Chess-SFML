@@ -7,10 +7,10 @@
 
 class King : public Piece {
 public:
-    King(bool isWhite, int row, int col, std::shared_ptr<sf::Texture> texture);
-    void move(std::shared_ptr<Piece>& piece_to_move, std::shared_ptr<Piece>& destination_square, bool& Turn) override;
-    void legal_movesW();
-    void legal_movesB();
+    King(int x, int y, bool isWhite, bool isEmpty, std::shared_ptr<sf::Texture> texture);
+    //void move(std::shared_ptr<Piece>& destination_square, bool& Turn) override;
+    virtual bool legal_movesWhite(std::shared_ptr<Piece>& destination_square);
+    virtual bool legal_movesBlack(std::shared_ptr<Piece>& destination_square);
 private:
     std::vector<std::shared_ptr<Piece>>legal_moves;
 };
