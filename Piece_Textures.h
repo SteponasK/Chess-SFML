@@ -18,6 +18,10 @@ public:
     std::shared_ptr<sf::Texture> b_rook_text;
     std::shared_ptr<sf::Texture> w_queen_text;
     std::shared_ptr<sf::Texture> b_queen_text;
-};
+    std::shared_ptr<sf::Texture> w_king_text;
+    std::shared_ptr<sf::Texture> b_king_text;
+    std::shared_ptr<sf::Texture> empty_square;
+    // truksta w_king
+}; extern Piece_Textures pieceTextures;
 
 #endif // PIECE_TEXTURES_H

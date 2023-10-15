@@ -7,38 +7,31 @@
 #include "Piece.h"
 #include "Pawn.h"
 #include "Constants.h"
+#include "Empty_Square.h"
+#include "Board.cpp" //board declared in this file:
+#include "King.h"
 
 int scale{};
+Board board;
+Piece_Textures pieceTextures;
+bool Turn = 0; // 0 - White, 1 - Black
 
-class Board {
-/*public:
-    Board()
-    {
-        for (int i = 0; i < numCols; ++i)
-        {
-            for (int j = 0; j < numRows; ++j)
-            {
-                if (i == 1)
-                {
-                    square[i][j] = std::make_shared<Pawn>(false, i, 6, Piece_Textures::w_pawn_text);
-                }
-                if (i == 6)
-                {
-                    square[i][j] = std::make_shared<Pawn>(true, i, 6, Piece_Textures::w_pawn_text);
-                }
-            }
-        }
-    }*/
-
-public:
-    const int numRows = 8;
-    const int numCols = 8;
-    std::array<std::array<std::shared_ptr<Piece>, 8>, 8 > square;
-};
-
-
-int main()
+int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judeti
 {
+
+
+    /*
+        TO DO:
+        KAI PAJUDA PAWN, PADARYTI KAD TUSTI LANGELIAI CORRECTLY UZSIPILDYTU, NES DABAR NESAMONE // DONE
+        KADANTI move() funkcija turi legal_moves in std::vector, tai tuos langelius butu galima highlight
+        // Sutvarkyt markalyze visa
+
+
+        10-09
+        Kai darau pawn negali kirsti kito pawn, bet gali kirsti tuscia langeli.
+        Padaryti logika jeigu row == 0 arba row == 7, kad kai skaiciuoja row+1 || row-1 neuzcrashintu
+    
+    */
     sf::RenderWindow window(sf::VideoMode(800, 800), "Chess");
     scale = window.getSize().x / 8;
     sf::Texture boardTexture;
@@ -49,61 +42,144 @@ int main()
     }
     sf::Sprite board_sprite(boardTexture);
 
-    Piece_Textures pieceTextures;
 
- /*   std::vector<Pawn> w_pawn;
-    std::vector<Pawn> b_pawn;
+
+    
     for (int i = 0; i < 8; ++i)
     {
-        w_pawn.emplace_back(true, i, 6, pieceTextures.w_pawn_text);
-        b_pawn.emplace_back(false, i, 1, pieceTextures.b_pawn_text);
-    }*/
-
-    Board board;
-    for (int i = 0; i < 8; ++i)
-    {
-        for (int j = 0; j < 8; ++j) 
+        for (int j = 0; j < 8; ++j)
         {
-            if (i == 1)
+            
+            if (i == 7 && j == 4)
             {
-                board.square[i][j] = std::make_shared<Pawn>(false, j, i, pieceTextures.b_pawn_text);
+                board.square[j][i] = std::make_shared<Empty_Square>(j, i, true, false, pieceTextures.w_king_text);
+                //board.square[j][i]->empty_square = false;
             }
-            else if (i == 6)
+            else if (i == 0 && j == 4)
             {
-                board.square[i][j] = std::make_shared<Pawn>(true, j, i, pieceTextures.w_pawn_text);
+                board.square[j][i] = std::make_shared<Empty_Square>(j, i, false, false, pieceTextures.b_king_text);
             }
             else
             {
-                board.square[i][j] = nullptr;
+                board.square[j][i] = std::make_shared<Empty_Square>(j, i, false, true, pieceTextures.b_knight_text); // pakeist kad nebutu false
             }
         }
     }
+    std::shared_ptr<Piece> selected_square1 = nullptr; // square which piece to move
+    std::shared_ptr<Piece> selected_square2 = nullptr; // square to which you want to move
 
     while (window.isOpen())
     {
         sf::Event event;
-        while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
+        while (window.pollEvent(event))
+        {
+            sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
+            if (event.type == sf::Event::Closed)
+            {
                 window.close();
             }
-            // Other events
-        }
-
-        // Game logic
-
-        window.clear(sf::Color::Black);
-        window.draw(board_sprite);
-        for (int i = 0; i < 8; ++i)
-        {
-            for (int j = 0; j < 8; ++j)
+            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
             {
-                if (board.square[i][j])
+                // Loop through all the pieces
+                // If a specific piece is selected, highlight legal moves
+                for (int i = 0; i < 8; ++i)
                 {
-                    window.draw(board.square[i][j]->sprite);
+                    for (int j = 0; j < 8; ++j)
+                    {
+                        if (board.square[j][i])
+                        {
+
+                            if (board.square[j][i]->sprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosition)))
+                            {
+                                if (!selected_square1)
+                                {
+                                    if (Turn == 0)
+                                    {
+                                        if (!board.square[j][i]->isEmpty)
+                                        {
+                                            if (board.square[j][i]->isWhite == true)
+                                            {
+                                                selected_square1 = board.square[j][i];
+                                            }
+                                        }
+                                    }
+                                    else if (Turn == 1)
+                                    {
+                                        if (!board.square[j][i]->isEmpty)
+                                        {
+                                            if (board.square[j][i]->isWhite == false)
+                                            {
+                                                selected_square1 = board.square[j][i];
+                                            }
+                                        }
+                                    }
+                                }
+                                else // jeigu turim pasirinke figura, galim pasirinkt destination langeli
+                                {
+                                    selected_square2 = board.square[j][i];
+                                    std::cout << "SELECTED2";
+                                }
+                                if (selected_square1 && selected_square2)
+                                {
+                                    if ((selected_square1->isWhite && selected_square2->isWhite)
+                                        || (!selected_square1->isWhite && !selected_square2->isWhite &&
+                                            !selected_square2->isEmpty))
+                                    {
+                                        std::cout << "pasikeicia";
+                                        selected_square1 = selected_square2;
+                                        selected_square2 = nullptr;
+                                    }
+                                }
+                            }
+                            
+                        }
+                    }
+
                 }
+
             }
         }
-        window.display();
+
+        // Other events
+    
+    // Game logic
+    //check_legal_move(selected_square1, selected_square2); // sita fnc galima delete
+        if (selected_square1)
+        {
+            std::cout << "selected_1: " << selected_square1->x + 1 << " " << selected_square1->y + 1 << std::endl;
+        }
+    if (selected_square1 && selected_square2)
+    { 
+   
+        selected_square1->move(selected_square2, true, Turn);
+        //std::cout << Turn;
+      //  board.square[selected_square2->row][selected_square2->col] = selected_square1;
+        selected_square1 = nullptr;
+        selected_square2 = nullptr; // reikia padaryt kazka su nullptr kad galeciau pakeist values
+      //  Turn = (Turn == 0) ? 1 : 0;
+        std::cout << std::endl  << "uwu" << Turn;
+    }
+
+
+    window.clear(sf::Color::Black);
+    window.draw(board_sprite);
+    for (int i = 0; i < 8; ++i)
+    {
+        for (int j = 0; j < 8; ++j)
+        {
+            
+            if (board.square[i][j])
+            {
+                board.square[i][j]->sprite.setPosition(scale * board.square[i][j]->x, scale * board.square[i][j]->y);
+                window.draw(board.square[i][j]->sprite);
+                //std::cout << board.square[i][j]->isWhite;
+            }
+            
+        }
+       // std::cout << std::endl;
+    }
+    
+    window.display();
     }
 
     return 0;
