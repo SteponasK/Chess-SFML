@@ -22,9 +22,9 @@
 //    }*/
 //
 //}
-//void King::legal_movesW(/*int row, int col, bool isWhite, bool first_move*/) {
+//std::vector<std::shared_ptr<Piece>> King::legal_movesWhite(/*int row, int col, bool isWhite, bool first_move*/) {
 //    int delta_x;
 //}
-//void King::legal_movesB(/*int row, int col, bool isWhite, bool first_move*/) {
+//std::vector<std::shared_ptr<Piece>> King::legal_movesBlack(/*int row, int col, bool isWhite, bool first_move*/) {
 //
 //}

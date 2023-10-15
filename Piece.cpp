@@ -9,11 +9,11 @@
     void Piece::move(std::shared_ptr<Piece>& destination, bool Capture, bool& Turn)
     {
     }
-     bool Piece::legal_movesWhite(std::shared_ptr<Piece>& destination_square)
+    std::vector<std::shared_ptr<Piece>> Piece::legal_movesWhite()
     {
-         return 1;
+        return std::vector<std::shared_ptr<Piece>>();
     }
-     bool Piece::legal_movesBlack(std::shared_ptr<Piece>& destination_square)
+    std::vector<std::shared_ptr<Piece>> Piece::legal_movesBlack()
     {
-         return 1;
+        return std::vector<std::shared_ptr<Piece>>();
     }

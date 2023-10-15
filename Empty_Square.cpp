@@ -10,8 +10,8 @@ Empty_Square::Empty_Square(int x, int y, bool isWhite, bool isEmpty, std::shared
     }
     //We just do nothing
     void Empty_Square::move(std::shared_ptr<Piece>& destination_square, bool Capture, bool& Turn) {}
-    bool Empty_Square::legal_movesWhite(std::shared_ptr<Piece>& destination_square) { return 0; }
-    bool Empty_Square::legal_movesBlack(std::shared_ptr<Piece>& destination_square) { return 0; }
+    std::vector<std::shared_ptr<Piece>> Empty_Square::legal_movesWhite() { return std::vector<std::shared_ptr<Piece>>(); }
+    std::vector<std::shared_ptr<Piece>> Empty_Square::legal_movesBlack() { return std::vector<std::shared_ptr<Piece>>(); }
     bool isEmpty;
     int x;
     int y;

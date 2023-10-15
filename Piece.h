@@ -7,8 +7,8 @@ class Piece {
 public:
     Piece(int x, int y, bool isWhite, bool isEmpty);
     virtual void move(std::shared_ptr<Piece>& destination_square, bool Capture, bool& Turn); // sita padaryt kkiekvienos vaiko class .cpp faile
-    virtual bool legal_movesWhite(std::shared_ptr<Piece>& destination_square);
-    virtual bool legal_movesBlack(std::shared_ptr<Piece>& destination_square);
+    virtual std::vector<std::shared_ptr<Piece>> legal_movesWhite();
+    virtual std::vector<std::shared_ptr<Piece>> legal_movesBlack();
     /*
     * TO DO:
     * create logic for: highlight legal moves:
