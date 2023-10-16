@@ -15,6 +15,9 @@ int scale{};
 Board board;
 Piece_Textures pieceTextures;
 bool Turn = 0; // 0 - White, 1 - Black
+bool wKingMoved = false;
+bool bKingMoved = false;
+
 
 int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judeti
 {
@@ -32,6 +35,7 @@ int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judet
         Padaryti logika jeigu row == 0 arba row == 7, kad kai skaiciuoja row+1 || row-1 neuzcrashintu
     
     */
+    // Padaryti pieces values protected, jas gauti by getter function.
     sf::RenderWindow window(sf::VideoMode(800, 800), "Chess");
     scale = window.getSize().x / 8;
     sf::Texture boardTexture;
@@ -42,8 +46,11 @@ int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judet
     }
     sf::Sprite board_sprite(boardTexture);
 
-
-
+    sf::Sprite highlightMove;
+    sf::Texture hightlightMoveText;
+    hightlightMoveText.loadFromFile("Resources/highlight_circle.png");
+    highlightMove.setTexture(hightlightMoveText);
+    highlightMove.setScale(0.22f, 0.22f);
     
     for (int i = 0; i < 8; ++i)
     {
@@ -197,28 +204,24 @@ int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judet
    
     //    std::cout << std::endl  << "uwu" << Turn;
     //}
-
-
     window.clear(sf::Color::Black);
     window.draw(board_sprite);
     for (int i = 0; i < 8; ++i)
     {
         for (int j = 0; j < 8; ++j)
         {
-            
             if (board.square[i][j])
             {
                 board.square[i][j]->sprite.setPosition(scale * board.square[i][j]->x, scale * board.square[i][j]->y);
                 window.draw(board.square[i][j]->sprite);
-                //std::cout << board.square[i][j]->isWhite;
-            }
-            
+                // if square[i][j]->highlighted:
+                // highlightMove.setposition(j*scale + scale/4, i * scale + scale/4);
+            }  
         }
-       // std::cout << std::endl;
     }
-    
+   // highlightMove.setPosition((5 * scale) + scale/4, 5 * scale + scale/4); // loop over every
+   // window.draw(highlightMove);
     window.display();
     }
-
     return 0;
 }

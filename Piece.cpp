@@ -17,3 +17,15 @@
     {
         return std::vector<std::shared_ptr<Piece>>();
     }
+    std::vector<std::shared_ptr<Piece>> Piece::dangerous_movesWhite()
+    {
+         return std::vector<std::shared_ptr<Piece>>();
+    }
+    std::vector<std::shared_ptr<Piece>> Piece::dangerous_movesBlack()
+     {
+         return std::vector<std::shared_ptr<Piece>>();
+     }
+    std::vector<std::shared_ptr<Piece>> Piece::controlledSquaresUpdate()
+    {
+        return std::vector<std::shared_ptr<Piece>>();
+    }

@@ -9,7 +9,11 @@ public:
     virtual void move(std::shared_ptr<Piece>& destination_square, bool Capture, bool& Turn); // sita padaryt kkiekvienos vaiko class .cpp faile
     virtual std::vector<std::shared_ptr<Piece>> legal_movesWhite();
     virtual std::vector<std::shared_ptr<Piece>> legal_movesBlack();
+    virtual std::vector<std::shared_ptr<Piece>> dangerous_movesWhite(); // moves that can not be played (king would be put in check)
+    virtual std::vector<std::shared_ptr<Piece>> dangerous_movesBlack();
+    virtual std::vector<std::shared_ptr<Piece>> controlledSquaresUpdate();
     /*
+    * 
     * TO DO:
     * create logic for: highlight legal moves:
     * ( drawina rutuliukus. bet tada reikia padaryti:
@@ -24,7 +28,9 @@ public:
     int y;
     bool isEmpty;
     bool isWhite;
+    bool highlight = false; // Highlight the field if it's legal.
     sf::Sprite sprite;
+    std::vector<std::shared_ptr<Piece>> controlledSquares;
 };
 
 #endif // !PIECE_H
