@@ -106,11 +106,21 @@ int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judet
                                 }
                                 else // jeigu turim pasirinke figura, galim pasirinkt destination langeli
                                 {
-                                    if (selected_square1 == board.square[j][i] || selected_square1->isWhite)
+                                    if ( (selected_square1 == board.square[j][i]))
                                     {
-
+                                        selected_square1 = nullptr;
+                                        break;
+                                    }
+                                    if ((selected_square1->isWhite == board.square[j][i]->isWhite) && !board.square[j][i]->isEmpty)
+                                    {
+                                        selected_square1 = board.square[j][i];
+                                        break;
                                     }
                                         bool Exists = false;
+                                    // check_move board funkcija
+                                    // move board funkcija
+                                    // tada for each loopo nereik
+
                                     for (auto legalMove : legalMoves)
                                     {
                                         if (board.square[j][i] == legalMove)
@@ -130,19 +140,6 @@ int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judet
                                         std::cout << "Move doesn't exist\n";
                                         break;
                                     }
-                                    /*
-                                    * IF board[j][i] yra in legal_moves vector:
-                                    *   IF(board[j][i]->isWhite != selected1->isWhite)
-                                    *       selected1->move(board[j][i], capture=true, Turn)
-                                    *   else selected1->move(board[j][i], capture=false, Turn)
-                                    *
-                                    */
-
-
-                                    //if(board.square[j][i]->isWhite != selected_square1->isWhite)
-                                       // selected_square2 = board.square[j][i];
-                                        // reiks castling logic dar
-                                    
                                     std::cout << "SELECTED2";
                                 }
                                 /*if (selected_square1 && selected_square2)
@@ -173,6 +170,7 @@ int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judet
         
         if (selected_square1)
         {
+            printf("Square1 is selected");
            // std::cout << "selected_1: " << selected_square1->x + 1 << " " << selected_square1->y + 1 << std::endl;
             if (selected_square1->isWhite){
                 legalMoves = selected_square1->legal_movesWhite();
