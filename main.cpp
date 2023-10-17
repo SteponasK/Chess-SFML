@@ -12,7 +12,8 @@
 #include "King.h"
 
 int scale{};
-Board board;
+std::vector<std::shared_ptr<Piece>> controlledSquares;
+//Board board;
 Piece_Textures pieceTextures;
 bool Turn = 0; // 0 - White, 1 - Black
 bool wKingMoved = false;
@@ -21,8 +22,8 @@ bool bKingMoved = false;
 
 int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judeti
 {
-
-
+   Board board; // galima padaryti kad butu global scope, bet tada reiktu .initialise funkcijos
+   // board.initialise();
     /*
         TO DO:
         KAI PAJUDA PAWN, PADARYTI KAD TUSTI LANGELIAI CORRECTLY UZSIPILDYTU, NES DABAR NESAMONE // DONE
@@ -52,29 +53,11 @@ int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judet
     highlightMove.setTexture(hightlightMoveText);
     highlightMove.setScale(0.22f, 0.22f);
     
-    for (int i = 0; i < 8; ++i)
-    {
-        for (int j = 0; j < 8; ++j)
-        {
-            
-            if (i == 7 && j == 4)
-            {
-                board.square[j][i] = std::make_shared<Empty_Square>(j, i, true, false, pieceTextures.w_king_text);
-                //board.square[j][i]->empty_square = false;
-            }
-            else if (i == 0 && j == 4)
-            {
-                board.square[j][i] = std::make_shared<Empty_Square>(j, i, false, false, pieceTextures.b_king_text);
-            }
-            else
-            {
-                board.square[j][i] = std::make_shared<Empty_Square>(j, i, false, true, pieceTextures.b_knight_text); // pakeist kad nebutu false
-            }
-        }
-    }
+    
     std::shared_ptr<Piece> selected_square1 = nullptr; // square which piece to move
     std::shared_ptr<Piece> selected_square2 = nullptr; // square to which you want to move
     std::vector<std::shared_ptr<Piece>> legalMoves;
+    std::vector<std::shared_ptr<Piece>> dangerousMoves;
     while (window.isOpen())
     {
         sf::Event event;
@@ -191,9 +174,25 @@ int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judet
         if (selected_square1)
         {
            // std::cout << "selected_1: " << selected_square1->x + 1 << " " << selected_square1->y + 1 << std::endl;
-            if (selected_square1->isWhite)
+            if (selected_square1->isWhite){
                 legalMoves = selected_square1->legal_movesWhite();
-            else  legalMoves = selected_square1->legal_movesBlack();
+                dangerousMoves = selected_square1->dangerous_movesWhite();
+            }
+            else{
+                legalMoves = selected_square1->legal_movesBlack();
+                dangerousMoves = selected_square1->dangerous_movesBlack();
+            }
+        }
+        for (int i = 0; i < legalMoves.size(); ++i)
+        {
+            for (int j = 0; j < dangerousMoves.size(); ++j)
+            {
+                if (legalMoves.at(i) == dangerousMoves.at(j))
+                {
+                    legalMoves.erase(legalMoves.begin() + i);
+                    // If the move is dangerous we erase it
+                }
+            }
         }
     //if (selected_square1 && selected_square2)
     //{ 

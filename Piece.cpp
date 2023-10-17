@@ -25,7 +25,11 @@
      {
          return std::vector<std::shared_ptr<Piece>>();
      }
-    std::vector<std::shared_ptr<Piece>> Piece::controlledSquaresUpdate()
+    std::vector<std::shared_ptr<Piece>> Piece::controlled_squareWhite()
+    {
+        return std::vector<std::shared_ptr<Piece>>();
+    }
+    std::vector<std::shared_ptr<Piece>> Piece::controlled_squareBlack()
     {
         return std::vector<std::shared_ptr<Piece>>();
     }
