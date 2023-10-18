@@ -10,6 +10,7 @@
 #include "Empty_Square.h"
 #include "Board.cpp" //board declared in this file:
 #include "King.h"
+#include <Windows.h>
 
 int scale{};
 std::vector<std::shared_ptr<Piece>> controlledSquares;
@@ -18,11 +19,12 @@ Piece_Textures pieceTextures;
 bool Turn = 0; // 0 - White, 1 - Black
 bool wKingMoved = false;
 bool bKingMoved = false;
+Board board;
 
 
 int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judeti
 {
-   Board board; // galima padaryti kad butu global scope, bet tada reiktu .initialise funkcijos
+    // galima padaryti kad butu global scope, bet tada reiktu .initialise funkcijos
    // board.initialise();
     /*
         TO DO:
@@ -90,6 +92,7 @@ int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judet
                                             if (board.square[j][i]->isWhite == true)
                                             {
                                                 selected_square1 = board.square[j][i];
+                                                //board.updateHIghlightMoves();
                                             }
                                         }
                                     }
@@ -100,6 +103,7 @@ int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judet
                                             if (board.square[j][i]->isWhite == false)
                                             {
                                                 selected_square1 = board.square[j][i];
+                                                //board.updateMoves();
                                             }
                                         }
                                     }
@@ -192,6 +196,10 @@ int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judet
                 }
             }
         }
+        if (selected_square1)
+        {
+            //highlight legal moves.
+        }
     //if (selected_square1 && selected_square2)
     //{ 
    
@@ -219,6 +227,10 @@ int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judet
    // highlightMove.setPosition((5 * scale) + scale/4, 5 * scale + scale/4); // loop over every
    // window.draw(highlightMove);
     window.display();
+   // std::cout << "uwu";
+   // Sleep(201);
+   // system("cls");
+    
     }
     return 0;
 }

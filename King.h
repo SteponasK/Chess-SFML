@@ -4,6 +4,7 @@
 #include "Piece.h"
 #include <SFML/Graphics.hpp>
 #include <memory>
+#include "Board.cpp"
 
 class King : public Piece {
 public:

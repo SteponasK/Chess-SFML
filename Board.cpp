@@ -1,8 +1,15 @@
+#ifndef BOARD_CPP
+
+#define BOARD_CPP
 #include <array>
 #include <memory>
 #include "Piece.h"
 #include "Empty_Square.h"
 #include "Piece_textures.h"
+#include "King.h"
+
+
+
 class Board {
 public:
     int WKingX;
@@ -31,20 +38,22 @@ public:
                 {
                     square[j][i] = std::make_shared<Empty_Square>(j, i, true, false, pieceTextures.w_king_text);
                     WKingX = j;
-                    WKingY = i;
+                    WKingY = i; 
                     square[j][i]->isKing = true;
                     //board.square[j][i]->empty_square = false;
                 }
                 else if (i == 0 && j == 4)
                 {
-                    square[j][i] = std::make_shared<Empty_Square>(j, i, false, false, pieceTextures.b_king_text);
+                    square[j][i] = std::make_shared<Empty_Square>(j, i, false, false, pieceTextures.w_king_text);
                     BKingX = j;
                     BKingY = i;
                     square[j][i]->isKing = true;
+                  
                 }
                 else
                 {
-                    square[j][i] = std::make_shared<Empty_Square>(j, i, false, true, pieceTextures.b_knight_text); // pakeist kad nebutu false
+                    square[j][i] = std::make_shared<Empty_Square>(j, i, false, true, pieceTextures.b_knight_text);
+                   
                 }
             }
         }
@@ -53,12 +62,14 @@ public:
     const int numRows = 8;
     const int numCols = 8;
     std::array<std::array<std::shared_ptr<Piece>, 8>, 8 > square;
+
+
     bool check_move(Board &board, std::shared_ptr<Piece> piece, std::shared_ptr<Piece> destination)
     { // Function to check if move is legal
         Board tempBoard(board);
         std::shared_ptr<Piece> tempPiece = tempBoard.square[piece->x][piece->y];
         std::shared_ptr<Piece> tempDestination = tempBoard.square[destination->x][destination->y];
-        
+        // Create tempboard, check if the move is legal, then return true if not legal
         std::vector<std::shared_ptr<Piece>> LEGALMOVES;
         std::vector<std::shared_ptr<Piece>> DANGEROUSMOVES;
 
@@ -84,14 +95,18 @@ public:
             }
         }
         bool capture = false; // sita reiks passint kaip parameter
-        for (auto LEGALMOVE : LEGALMOVES)
+        for (auto LEGALMOVE : LEGALMOVES) // durna logika
         {
             if (LEGALMOVE == tempDestination)
             {
                 tempBoard.move(piece,tempDestination, false, false); // en passant and castling to be done
                 if (tempBoard.isKingInCheck(tempPiece->isWhite, WKingX, WKingY, BKingX, BKingY))
-                    return 1;
-                else return 0;
+                {
+                    return 0;
+                    //create maybe destructors to delete this mess.
+                }
+                    
+                else return 1;
             }
             break;
         }
@@ -174,33 +189,42 @@ public:
                 }
             }
     }
-    void initialise() // nereikalingas turbut, nes galim naudot constructors.
+   void highlightMoves_update()
     {
-        for (int i = 0; i < 8; ++i)
-        {
-            for (int j = 0; j < 8; ++j)
-            {
 
-                if (i == 7 && j == 4)
-                {
-                    square[j][i] = std::make_shared<Empty_Square>(j, i, true, false, pieceTextures.w_king_text);
-                    WKingX = j;
-                    WKingY = i;
-                    square[j][i]->isKing = true;
-                    //board.square[j][i]->empty_square = false;
-                }
-                else if (i == 0 && j == 4)
-                {
-                    square[j][i] = std::make_shared<Empty_Square>(j, i, false, false, pieceTextures.b_king_text);
-                    BKingX = j;
-                    BKingY = i;
-                    square[j][i]->isKing = true;
-                }
-                else
-                {
-                    square[j][i] = std::make_shared<Empty_Square>(j, i, false, true, pieceTextures.b_knight_text); // pakeist kad nebutu false
-                }
-            }
-        }
     }
+   std::vector<std::shared_ptr<Piece>> legalMOVES;
+   //Jeigu 
+    //void initialise() // nereikalingas turbut, nes galim naudot constructors.
+    //{
+    //    for (int i = 0; i < 8; ++i)
+    //    {
+    //        for (int j = 0; j < 8; ++j)
+    //        {
+
+    //            if (i == 7 && j == 4)
+    //            {
+    //                square[j][i] = std::make_shared<Empty_Square>(j, i, true, false, pieceTextures.w_king_text);
+    //                WKingX = j;
+    //                WKingY = i;
+    //                square[j][i]->isKing = true;
+    //                //board.square[j][i]->empty_square = false;
+    //            }
+    //            else if (i == 0 && j == 4)
+    //            {
+    //                square[j][i] = std::make_shared<Empty_Square>(j, i, false, false, pieceTextures.b_king_text);
+    //                BKingX = j;
+    //                BKingY = i;
+    //                square[j][i]->isKing = true;
+    //            }
+    //            else
+    //            {
+    //                square[j][i] = std::make_shared<Empty_Square>(j, i, false, true, pieceTextures.b_knight_text); // pakeist kad nebutu false
+    //            }
+    //        }
+    //    }
+    //}
 }; extern Board board;
+//HIGHLIHT LEGAL MOVES
+
+#endif // !BOARD_CPP
