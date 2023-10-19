@@ -1,7 +1,11 @@
 #include "Piece.h"
-    Piece::Piece(int x, int y, bool isWhite, bool isEmpty)
-        : x(x), y(y), isWhite(isWhite),  isEmpty(isEmpty){
-    }
+#include "Constants.h"
+Piece::Piece(int x, int y, bool isWhite, bool isEmpty, std::shared_ptr<sf::Texture> texture)
+    : x(x), y(y), isWhite(isWhite), isEmpty(isEmpty) {
+    sprite.setTexture(*texture);
+    sprite.setPosition(sf::Vector2f(x * scale, y * scale));
+}
+
     //void Piece::move(std::shared_ptr<Piece> destination_square);
     /*{
 

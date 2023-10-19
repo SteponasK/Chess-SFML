@@ -5,7 +5,7 @@
 #include <memory>
 class Piece {
 public:
-    Piece(int x, int y, bool isWhite, bool isEmpty);
+    Piece(int x, int y, bool isWhite, bool isEmpty, std::shared_ptr<sf::Texture> texture);
     virtual void move(std::shared_ptr<Piece>& destination_square, bool Capture, bool& Turn); // sita padaryt kkiekvienos vaiko class .cpp faile
     // move() function i think will not be needed for each piece.
     virtual std::vector<std::shared_ptr<Piece>> legal_movesWhite();

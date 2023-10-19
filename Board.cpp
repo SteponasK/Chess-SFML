@@ -7,6 +7,7 @@
 #include "Empty_Square.h"
 #include "Piece_textures.h"
 #include "King.h"
+#include <iostream>
 
 
 
@@ -36,7 +37,7 @@ public:
 
                 if (i == 7 && j == 4)
                 {
-                    square[j][i] = std::make_shared<Empty_Square>(j, i, true, false, pieceTextures.w_king_text);
+                    square[j][i] = std::make_shared<King>(j, i, true, false, pieceTextures.w_king_text);
                     WKingX = j;
                     WKingY = i; 
                     square[j][i]->isKing = true;
@@ -44,7 +45,7 @@ public:
                 }
                 else if (i == 0 && j == 4)
                 {
-                    square[j][i] = std::make_shared<Empty_Square>(j, i, false, false, pieceTextures.w_king_text);
+                    square[j][i] = std::make_shared<King>(j, i, false, false, pieceTextures.b_king_text);
                     BKingX = j;
                     BKingY = i;
                     square[j][i]->isKing = true;
@@ -64,166 +65,221 @@ public:
     std::array<std::array<std::shared_ptr<Piece>, 8>, 8 > square;
 
 
-    bool check_move(Board &board, std::shared_ptr<Piece> piece, std::shared_ptr<Piece> destination)
+    bool check_move(Board &board, std::shared_ptr<Piece> piece/*, std::shared_ptr<Piece> destination*/)
     { // Function to check if move is legal
-        Board tempBoard(board);
-        std::shared_ptr<Piece> tempPiece = tempBoard.square[piece->x][piece->y];
-        std::shared_ptr<Piece> tempDestination = tempBoard.square[destination->x][destination->y];
-        // Create tempboard, check if the move is legal, then return true if not legal
-        std::vector<std::shared_ptr<Piece>> LEGALMOVES;
-        std::vector<std::shared_ptr<Piece>> DANGEROUSMOVES;
+        
+        // reikia dar check ar dabartyje king nera in check
+        std::vector<std::shared_ptr<Piece>> legalMoves_copy;
+        for (auto destination : legalMOVES)
+        {
+            Board tempBoard(board);
+            std::shared_ptr<Piece> tempPiece = tempBoard.square[piece->x][piece->y];
+            std::shared_ptr<Piece> tempDestination = tempBoard.square[destination->x][destination->y];
+            tempBoard.move(tempPiece, tempDestination, false, false);
+            if (!isKingInCheck(tempBoard, tempPiece->isWhite))
+            {
+                legalMoves_copy.push_back(destination);
+            }
+        }
+        legalMOVES = legalMoves_copy;
 
-        if (tempPiece->isWhite)
-        {
-            DANGEROUSMOVES = tempPiece->dangerous_movesWhite();
-            LEGALMOVES = tempPiece->legal_movesWhite();
-        }
-        else
-        {
-            DANGEROUSMOVES = tempPiece->dangerous_movesBlack();
-            LEGALMOVES = tempPiece->legal_movesBlack();
-        }
-        for (int i = 0; i < LEGALMOVES.size(); ++i)
-        {
-            for (int j = 0; j < DANGEROUSMOVES.size(); ++j)
-            {
-                if (LEGALMOVES.at(i) == DANGEROUSMOVES.at(j))
-                {
-                    LEGALMOVES.erase(LEGALMOVES.begin() + i);
-                    // If the move is dangerous we erase it
-                }
-            }
-        }
-        bool capture = false; // sita reiks passint kaip parameter
-        for (auto LEGALMOVE : LEGALMOVES) // durna logika
-        {
-            if (LEGALMOVE == tempDestination)
-            {
-                tempBoard.move(piece,tempDestination, false, false); // en passant and castling to be done
-                if (tempBoard.isKingInCheck(tempPiece->isWhite, WKingX, WKingY, BKingX, BKingY))
-                {
-                    return 0;
-                    //create maybe destructors to delete this mess.
-                }
-                    
-                else return 1;
-            }
-            break;
-        }
+        return true; // do smth with this
+        //std::vector<std::shared_ptr<Piece>> LEGALMOVES;
+        //std::vector<std::shared_ptr<Piece>> DANGEROUSMOVES;
+
+        //if (tempPiece->isWhite)
+        //{
+        //    DANGEROUSMOVES = tempPiece->dangerous_movesWhite();
+        //    LEGALMOVES = tempPiece->legal_movesWhite();
+        //}
+        //else
+        //{
+        //    DANGEROUSMOVES = tempPiece->dangerous_movesBlack();
+        //    LEGALMOVES = tempPiece->legal_movesBlack();
+        //}
+        //for (int i = 0; i < LEGALMOVES.size(); ++i)
+        //{
+        //    for (int j = 0; j < DANGEROUSMOVES.size(); ++j)
+        //    {
+        //        if (LEGALMOVES.at(i) == DANGEROUSMOVES.at(j))
+        //        {
+        //            LEGALMOVES.erase(LEGALMOVES.begin() + i);
+        //            // If the move is dangerous we erase it
+        //        }
+        //    }
+        //}
+        //bool capture = false; // sita reiks passint kaip parameter
+        //for (auto LEGALMOVE : LEGALMOVES) // durna logika
+        //{
+        //    if (LEGALMOVE == tempDestination)
+        //    {
+        //        tempBoard.move(piece,tempDestination, false, false); // en passant and castling to be done
+        //        if (tempBoard.isKingInCheck(tempPiece->isWhite, WKingX, WKingY, BKingX, BKingY))
+        //        {
+        //            return 0;
+        //            //create maybe destructors to delete this mess.
+        //        }
+        //            
+        //        else return 1;
+        //    }
+        //    break;
+        //}
     }
-    bool isKingInCheck(bool isWhite, int WkingX, int WkingY, int BkingX, int BkingY)
+    void controlledSquaresBlack() {}
+    void controlledSquaresWhite() {}
+    bool isKingInCheck(Board& board, bool king_color)
     {
-        std::vector<std::shared_ptr <Piece>> all_dangerous_squares;
         for (int i = 0; i < 8; ++i)
         {
             for (int j = 0; j < 8; ++j)
             {
-                if (square[j][i]->isWhite == true && isWhite == true)
+                std::shared_ptr<Piece> currentPiece = board.square[j][i];
+                if (currentPiece->isWhite != king_color) // randam enemy pieces
                 {
-                    std::vector<std::shared_ptr<Piece>> dangerous_squares = square[j][j]->controlled_squareWhite();
-
-                    for (auto square : dangerous_squares)
+                    std::vector<std::shared_ptr<Piece>>  opponentMoves;
+                    if (currentPiece->isWhite)
                     {
-                        all_dangerous_squares.push_back(square);
+                        opponentMoves = currentPiece->legal_movesBlack();
                     }
-                }
-                else if (square[j][i]->isWhite == false && isWhite == false)
-                {
-                    std::vector<std::shared_ptr<Piece>> dangerous_squares = square[j][j]->controlled_squareBlack();
-
-                    for (auto square : dangerous_squares)
+                    else
                     {
-                        all_dangerous_squares.push_back(square);
+                        opponentMoves = currentPiece->legal_movesWhite();
                     }
-                }
-            }
-        }
-        if (isWhite)
-        {
-            for (auto square : all_dangerous_squares)
-            {
-                if (square->x == WkingX && square->y == WkingY)
-                {
-                    return 1;
-                }
-            }
-        }
-        else
-        {
-            for (auto square : all_dangerous_squares)
-            {
-                if (square->x == BkingX && square->y == BkingY)
-                {
-                    return 1;
-                }
-            }
-        }
-        return 0;
-    }
-    void move(std::shared_ptr<Piece> piece, std::shared_ptr<Piece> destination, bool castle, bool passant){
-        // piece doesnt change in the array
-            Piece temp(piece->x,piece->y,piece->isWhite, piece->isEmpty);
-            piece->x = destination->x;
-            piece->y = destination->y;
-            destination = piece; // piece doesnt change in the array, bet sita line gal sutvarkys
-            Piece_Textures text;
-            destination = std::make_shared<Empty_Square>(temp.x, temp.y, false, true, text.b_knight_text);
-        //Implement castling logic
-            for (int i = 0; i < 8; ++i)
-            {
-                for (int j = 0; j < 8; ++j) // Updating kings position
-                {
-                    if (square[j][i]->isKing)
+                    for (auto move : opponentMoves)
                     {
-                        if (square[j][i]->isWhite)
+                        if (currentPiece->isWhite)
                         {
-                            WKingX = square[j][i]->x;
-                            WKingY = square[j][i]->y; // cia gali but errors su x ir y / j ir i
+                            if (move->x == WKingX && move->y == WKingY)
+                                return true;
                         }
                         else
                         {
-                            BKingX = square[j][i]->x;
-                            BKingY = square[j][i]->y;
+                            if (move->x == BKingX && move->y == BKingY)
+                                return true;
                         }
                     }
                 }
             }
+        }
+        return false;
     }
-   void highlightMoves_update()
-    {
+    //void move(std::shared_ptr<Piece> piece, std::shared_ptr<Piece> destination, bool castle, bool passant) {
+    //    // Create a copy of the destination square
+    //    std::shared_ptr<Piece> tempDestination = square[destination->x][destination->y];
+    //    printf( "uwu");
 
-    }
-   std::vector<std::shared_ptr<Piece>> legalMOVES;
-   //Jeigu 
-    //void initialise() // nereikalingas turbut, nes galim naudot constructors.
-    //{
-    //    for (int i = 0; i < 8; ++i)
-    //    {
-    //        for (int j = 0; j < 8; ++j)
-    //        {
 
-    //            if (i == 7 && j == 4)
-    //            {
-    //                square[j][i] = std::make_shared<Empty_Square>(j, i, true, false, pieceTextures.w_king_text);
-    //                WKingX = j;
-    //                WKingY = i;
-    //                square[j][i]->isKing = true;
-    //                //board.square[j][i]->empty_square = false;
-    //            }
-    //            else if (i == 0 && j == 4)
-    //            {
-    //                square[j][i] = std::make_shared<Empty_Square>(j, i, false, false, pieceTextures.b_king_text);
-    //                BKingX = j;
-    //                BKingY = i;
-    //                square[j][i]->isKing = true;
-    //            }
-    //            else
-    //            {
-    //                square[j][i] = std::make_shared<Empty_Square>(j, i, false, true, pieceTextures.b_knight_text); // pakeist kad nebutu false
-    //            }
+    //    // Update the destination square with the piece being moved
+    //    square[destination->x][destination->y] = piece;
+
+    //    // Update the source square as empty
+    //    square[piece->x][piece->y] = std::make_shared<Empty_Square>(piece->x, piece->y, false, true, Piece_Textures().b_knight_text);
+
+    //    // Implement castling logic or any other specific move handling here
+
+    //    // Update king positions if needed
+    //    if (piece->isKing) {
+    //        if (piece->isWhite) {
+    //            WKingX = destination->x;
+    //            WKingY = destination->y;
+    //        }
+    //        else {
+    //            BKingX = destination->x;
+    //            BKingY = destination->y;
     //        }
     //    }
     //}
+
+    void move(std::shared_ptr<Piece> piece, std::shared_ptr<Piece> destination, bool castle, bool passant){ // castle passant sutvarkyt dar 
+        // piece doesnt change in the array
+        for (auto move : legalMOVES)
+        {
+            if (move == destination)
+            {
+                Piece piece_temp(piece->x, piece->y, piece->isWhite, piece->isEmpty, pieceTextures.b_bishop_text);//b bishop text, because this is not needed, so it is random texture 
+                Piece destination_temp(destination->x, destination->y, destination->isWhite, destination->isEmpty, pieceTextures.b_bishop_text);//destination->sprite.getTexture()
+                square[destination->x][destination->y] = piece;
+                piece->x = destination_temp.x;
+                piece->y = destination_temp.y;
+
+                square[piece_temp.x][piece_temp.y] = std::make_shared<Empty_Square>(piece_temp.x, piece_temp.y, false, true, pieceTextures.w_knight_text);
+
+                printf("NICE");
+
+                 //Implement castling logic
+                for (int i = 0; i < 8; ++i)
+                {
+                    for (int j = 0; j < 8; ++j) // Updating kings position
+                    {
+                        if (square[j][i]->isKing)
+                        {
+                            if (square[j][i]->isWhite)
+                            {
+                                WKingX = square[j][i]->x;
+                                WKingY = square[j][i]->y; // cia gali but errors su x ir y / j ir i
+                            }
+                            else
+                            {
+                                BKingX = square[j][i]->x;
+                                BKingY = square[j][i]->y;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+    }
+   void highlightMoves_update()
+    {
+       for (int i = 0; i < 8; ++i) // sita pakeist, gal in main.cpp naudot removeHIghlighted moves, o tada sita callint
+       {
+           for (int j = 0; j < 8; ++j)
+           {
+               square[j][i]->highlight = false;
+           }
+       }
+       for (auto move : legalMOVES)
+       {
+           move->highlight = true;
+
+           std::cout << "move legal\n";
+       }
+       std::cout << "pabaiga funkcijos highlightmoves update\n"; 
+       std::cout << legalMOVES.size();
+    }
+   void removeHighlighted_moves()
+   {
+       for (int i = 0; i < 8; ++i)
+       {
+           for (int j = 0; j < 8; ++j)
+           {
+               square[j][i]->highlight = false;
+           }
+       }
+   }
+   void calculate_legal_moves(std::shared_ptr<Piece> piece) // surandam legal moves
+   {
+       std::cout << piece->x << ' ' << piece->y << ' ' << piece->isKing << '\n';
+       printf("function calculate_legal_moves called\n");
+
+       // cia galiu padaryti, kad atgaunu structa, ir tada pushbackinu i legalmoves.
+       if (piece->isWhite)
+       {
+           legalMOVES = piece->legal_movesWhite();
+           std::cout << "WHITE PIECE\n";
+       }
+       else
+       {
+           legalMOVES = piece->legal_movesBlack();
+           std::cout << "BLACK PIECE\n";
+       }
+   }
+   void removeLegal_moves()
+   {
+       legalMOVES.clear();
+   }
+   std::vector<std::shared_ptr<Piece>> legalMOVES;
 }; extern Board board;
 //HIGHLIHT LEGAL MOVES
 
