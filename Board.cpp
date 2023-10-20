@@ -136,7 +136,7 @@ public:
                 std::shared_ptr<Piece> currentPiece = board.square[j][i];
                 if (currentPiece->isWhite != king_color) // randam enemy pieces
                 {
-                    std::vector<std::shared_ptr<Piece>>  opponentMoves;
+                    std::vector<std::pair<int, int>>  opponentMoves;
                     if (currentPiece->isWhite)
                     {
                         opponentMoves = currentPiece->legal_movesBlack();
@@ -149,12 +149,12 @@ public:
                     {
                         if (currentPiece->isWhite)
                         {
-                            if (move->x == WKingX && move->y == WKingY)
+                            if (move.first == WKingX && move.second == WKingY)
                                 return true;
                         }
                         else
                         {
-                            if (move->x == BKingX && move->y == BKingY)
+                            if (move.first == BKingX && move.second == BKingY)
                                 return true;
                         }
                     }
@@ -196,14 +196,26 @@ public:
         {
             if (move == destination)
             {
-                Piece piece_temp(piece->x, piece->y, piece->isWhite, piece->isEmpty, pieceTextures.b_bishop_text);//b bishop text, because this is not needed, so it is random texture 
-                Piece destination_temp(destination->x, destination->y, destination->isWhite, destination->isEmpty, pieceTextures.b_bishop_text);//destination->sprite.getTexture()
-                square[destination->x][destination->y] = piece;
-                piece->x = destination_temp.x;
-                piece->y = destination_temp.y;
+                //Piece piece_temp(piece->x, piece->y, piece->isWhite, piece->isEmpty, pieceTextures.b_bishop_text);//b bishop text, because this is not needed, so it is random texture 
+                //Piece destination_temp(destination->x, destination->y, destination->isWhite, destination->isEmpty, pieceTextures.b_bishop_text);//destination->sprite.getTexture()
+                //square[destination->x][destination->y] = piece;
+                //piece->x = destination_temp.x;
+                //piece->y = destination_temp.y;
 
-                square[piece_temp.x][piece_temp.y] = std::make_shared<Empty_Square>(piece_temp.x, piece_temp.y, false, true, pieceTextures.w_knight_text);
+                // piece x y = destination x y
+                // destination x y = piece x y
+                // swap destyination su piece
 
+                // sitas irgi neveikia (karalius pasivercia i white knight, o last langelis i juoda)
+                std::swap(piece->x, destination->x);
+                std::swap(piece->y, destination->y);
+                std::swap(piece, destination);
+                destination->isEmpty = true;
+                destination->sprite.setTexture(*pieceTextures.w_knight_text);
+                
+
+                //square[piece_temp.x][piece_temp.y] = std::make_shared<Empty_Square>(piece_temp.x, piece_temp.y, false, true, pieceTextures.w_knight_text);
+         
                 printf("NICE");
 
                  //Implement castling logic
@@ -262,17 +274,22 @@ public:
    {
        std::cout << piece->x << ' ' << piece->y << ' ' << piece->isKing << '\n';
        printf("function calculate_legal_moves called\n");
-
+       std::vector<std::pair<int, int>> legalMoves_pair;
+        
        // cia galiu padaryti, kad atgaunu structa, ir tada pushbackinu i legalmoves.
        if (piece->isWhite)
        {
-           legalMOVES = piece->legal_movesWhite();
+           legalMoves_pair = piece->legal_movesWhite();
            std::cout << "WHITE PIECE\n";
        }
        else
        {
-           legalMOVES = piece->legal_movesBlack();
+           legalMoves_pair = piece->legal_movesBlack();
            std::cout << "BLACK PIECE\n";
+       }
+       for (auto pair : legalMoves_pair)
+       {
+           legalMOVES.push_back(square[pair.first][pair.second]);
        }
    }
    void removeLegal_moves()

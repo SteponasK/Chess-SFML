@@ -13,13 +13,15 @@ Piece::Piece(int x, int y, bool isWhite, bool isEmpty, std::shared_ptr<sf::Textu
     void Piece::move(std::shared_ptr<Piece>& destination, bool Capture, bool& Turn)
     {
     }
-    std::vector<std::shared_ptr<Piece>> Piece::legal_movesWhite()
+    std::vector<std::pair<int, int>> Piece::legal_movesWhite()
     {
-        return std::vector<std::shared_ptr<Piece>>();
+        std::vector<std::pair<int, int>> piece;
+        return piece;
     }
-    std::vector<std::shared_ptr<Piece>> Piece::legal_movesBlack()
+    std::vector<std::pair<int, int>> Piece::legal_movesBlack()
     {
-        return std::vector<std::shared_ptr<Piece>>();
+        std::vector<std::pair<int, int>> piece;
+        return piece;
     }
     std::vector<std::shared_ptr<Piece>> Piece::dangerous_movesWhite()
     {

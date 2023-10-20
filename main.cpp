@@ -88,6 +88,7 @@ int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judet
                                 {
                                     if (Turn == 0)
                                     {
+                                        /////
                                         if (!board.square[j][i]->isEmpty)
                                         {
                                             if (board.square[j][i]->isWhite == true) // galima i same spalva
@@ -253,12 +254,14 @@ int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judet
             {
                 board.square[i][j]->sprite.setPosition(scale * board.square[i][j]->x, scale * board.square[i][j]->y);
                 window.draw(board.square[i][j]->sprite);
+               // std::cout << board.square[j][i].use_count() << std::endl;
 
                 if (board.square[j][i]->highlight)
                 {
                     // galim sukurt sf vector ir taip cuter pakeist pos
                     highlightMove.setPosition(board.square[j][i]->x * scale, board.square[j][i]->y * scale);
                     window.draw(highlightMove);
+                    
                     std::cout << "DREW";
                 }
             }  
