@@ -27,37 +27,6 @@ std::vector<std::pair<int, int>>  King::legal_movesWhite() {
         legalMoves.push_back(std::make_pair(x - 1, y - 1));
         legalMoves.push_back(std::make_pair(x - 1, y + 1));
         legalMoves.push_back(std::make_pair(x + 0, y - 1));
-        //BUG:
-        // Nejuda karalius, nes negauna legal moves
-        // TODO:
-        // padaryti, kad visos legal_moves fnc returnina structa arba kazkoki containeri
-        // kuris turi x ir y, visu legal moves
-        // board.cpp pakeist funkcija, kad is gautu x ir y, appendintu legal moves;
-    }
-    if (y == 7)
-    {
-        if (x == 0)
-        {
-            legalMoves.push_back(std::make_pair(x + 1, y + 0));
-            legalMoves.push_back(std::make_pair(x + 1, y - 1));
-            legalMoves.push_back(std::make_pair(x + 0, y - 1));
-            
-        }
-        else if (x == 7)
-        {
-            legalMoves.push_back(std::make_pair(x - 1, y - 1));
-            legalMoves.push_back(std::make_pair(x - 1, y + 0));
-            legalMoves.push_back(std::make_pair(x + 0, y - 1));
-        }
-        else
-        {
-            legalMoves.push_back(std::make_pair(x + 1, y + 0));
-            legalMoves.push_back(std::make_pair(x + 1, y - 1));
-            legalMoves.push_back(std::make_pair(x + 0, y - 1));
-            legalMoves.push_back(std::make_pair(x - 1, y - 1));
-            legalMoves.push_back(std::make_pair(x - 1, y + 0));
-        }
-            
     }
     if (y == 7)
     {
@@ -92,7 +61,7 @@ std::vector<std::pair<int, int>>  King::legal_movesWhite() {
             legalMoves.push_back(std::make_pair(x + 1, y + 1));
             legalMoves.push_back(std::make_pair(x + 0, y + 1));
         }
-        if (x == 7)
+        else if (x == 7)
         {
             legalMoves.push_back(std::make_pair(x  - 1, y + 0));
             legalMoves.push_back(std::make_pair(x - 1, y + 1));
@@ -103,10 +72,31 @@ std::vector<std::pair<int, int>>  King::legal_movesWhite() {
             legalMoves.push_back(std::make_pair(x - 1, y + 0));
             legalMoves.push_back(std::make_pair(x + 1, y + 0));
             legalMoves.push_back(std::make_pair(x + 0, y + 1));
-            legalMoves.push_back(std::make_pair(x - 1, y + 0));
+            legalMoves.push_back(std::make_pair(x - 1, y + 1));
             legalMoves.push_back(std::make_pair(x + 1, y + 1));
         }
     }
+    if (x == 0 && (y != 0 && y != 7))
+    {
+        legalMoves.push_back(std::make_pair(x + 0, y - 1));
+        legalMoves.push_back(std::make_pair(x + 1, y - 1));
+        legalMoves.push_back(std::make_pair(x + 1, y + 0));
+        legalMoves.push_back(std::make_pair(x + 1, y + 1));
+        legalMoves.push_back(std::make_pair(x + 0, y + 1));
+
+    }
+    if (x == 7 && (y != 0 && y != 7))
+    {
+        legalMoves.push_back(std::make_pair(x - 1, y - 1));
+        legalMoves.push_back(std::make_pair(x + 0, y - 1));
+        legalMoves.push_back(std::make_pair(x - 1, y + 0));
+        legalMoves.push_back(std::make_pair(x - 1, y + 1));
+        legalMoves.push_back(std::make_pair(x + 0, y + 1));
+
+    }
+
+    // padaryti more efficient, pirma suskaiciuot visus langelius aplinkui
+    // tada if(blah blah) remove move
     printf("legal_movesWhite KING fnc called\n");
     
 

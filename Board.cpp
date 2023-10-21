@@ -196,6 +196,33 @@ public:
         {
             if (move == destination)
             {
+                if (castle)
+                {
+                    // do casling
+                    break;
+                }
+                if (passant)
+                {
+                    //do the move
+                    break;
+                }
+                int pieceX = piece->x;
+                int pieceY = piece->y;
+                // swap pieces in square array
+                square[piece->x][piece->y] = destination;
+                square[destination->x][destination->y] = piece;
+
+                // update the positions 
+                std::swap(piece->x, destination->x);
+                std::swap(piece->y, destination->y);
+
+                // update the isEmpty 
+               // piece->isEmpty = true;
+                destination->isEmpty = false;
+               square[pieceX][pieceY] = std::make_shared<Empty_Square>(pieceX, pieceY, false, true, pieceTextures.w_knight_text);
+                std::cout << "WWUWUW";
+                
+
                 //Piece piece_temp(piece->x, piece->y, piece->isWhite, piece->isEmpty, pieceTextures.b_bishop_text);//b bishop text, because this is not needed, so it is random texture 
                 //Piece destination_temp(destination->x, destination->y, destination->isWhite, destination->isEmpty, pieceTextures.b_bishop_text);//destination->sprite.getTexture()
                 //square[destination->x][destination->y] = piece;
@@ -206,12 +233,21 @@ public:
                 // destination x y = piece x y
                 // swap destyination su piece
 
+                
                 // sitas irgi neveikia (karalius pasivercia i white knight, o last langelis i juoda)
-                std::swap(piece->x, destination->x);
-                std::swap(piece->y, destination->y);
-                std::swap(piece, destination);
-                destination->isEmpty = true;
-                destination->sprite.setTexture(*pieceTextures.w_knight_text);
+              
+                // std::swap(piece->x, destination->x);
+               // std::swap(piece->y, destination->y);
+
+
+
+               /* std::swap(piece, destination);
+                piece->sprite.setTexture(*pieceTextures.w_knight_text);*/
+
+
+                //destination->isEmpty = true;
+                //destination->sprite.setTexture(*pieceTextures.w_knight_text);
+                
                 
 
                 //square[piece_temp.x][piece_temp.y] = std::make_shared<Empty_Square>(piece_temp.x, piece_temp.y, false, true, pieceTextures.w_knight_text);
@@ -238,6 +274,10 @@ public:
                         }
                     }
                 }
+                std::cout << std::endl << WKingX << WKingY << std::endl;
+                std::cout << square[WKingX][WKingY]->isWhite;
+                std::cout << square[WKingX][WKingY]->isKing;
+                break;
             }
         }
         

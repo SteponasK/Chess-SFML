@@ -60,6 +60,10 @@ int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judet
     std::shared_ptr<Piece> selected_square2 = nullptr; // square to which you want to move
    //std::vector<std::shared_ptr<Piece>> legalMoves;
     //std::vector<std::shared_ptr<Piece>> dangerousMoves;
+    sf::Sprite kinglocation;
+    sf::Texture kinglocationTex;
+    kinglocationTex.loadFromFile("Resources/kinglocation.png");
+    kinglocation.setTexture(kinglocationTex);
     while (window.isOpen())
     {
         sf::Event event;
@@ -88,7 +92,7 @@ int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judet
                                 {
                                     if (Turn == 0)
                                     {
-                                        /////
+                                        //////faferfsefsefawdawdaca.l.l.lgrsgdrgrdg
                                         if (!board.square[j][i]->isEmpty)
                                         {
                                             if (board.square[j][i]->isWhite == true) // galima i same spalva
@@ -98,7 +102,7 @@ int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judet
                                                 board.calculate_legal_moves(selected_square1);
                                                 board.check_move(board, selected_square1);
                                                 board.highlightMoves_update();
-                                                ////h
+                                                ////h/
                                             }
                                         }
                                     }
@@ -113,7 +117,7 @@ int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judet
                                                 board.check_move(board, selected_square1);
                                                 board.highlightMoves_update();
                                                 //board.updateMoves();
-                                                /////
+                                                ///////
                                                 
                                             }
                                         }
@@ -125,6 +129,7 @@ int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judet
                                     {
                                         selected_square1 = nullptr;
                                         board.removeHighlighted_moves();
+                                        board.removeLegal_moves();
                                         break;
                                     }
                                     else if ((selected_square1->isWhite == board.square[j][i]->isWhite) && !board.square[j][i]->isEmpty)
@@ -143,7 +148,7 @@ int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judet
                                         board.removeLegal_moves();
                                         selected_square1 = nullptr;
                                         selected_square2 = nullptr;
-                                        // changge turn
+                                        // changge turn/
                                     }
                                        /* bool Exists = false;*/
                                     // check_move board funkcija
@@ -186,7 +191,7 @@ int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judet
                             
                         }
                     }
-
+                    /////
                 }
 
             }
@@ -227,7 +232,7 @@ int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judet
         //        {
         //            legalMoves.erase(legalMoves.begin() + i);
         //            // If the move is dangerous we erase it
-        //        }
+        //        }////////
         //    }
         //}
         if (selected_square1)
@@ -253,21 +258,29 @@ int main() // dabar padaryti ->move() funkcija pawn klasei kad butu galima judet
             if (board.square[i][j])
             {
                 board.square[i][j]->sprite.setPosition(scale * board.square[i][j]->x, scale * board.square[i][j]->y);
+                if(!board.square[i][j]->isEmpty)
                 window.draw(board.square[i][j]->sprite);
-               // std::cout << board.square[j][i].use_count() << std::endl;
-
+               // std::cout << board.square[j][i].use_count() << std::endl;///
+                //yukyuk//
+                if (board.square[j][i]->isKing)
+                {
+                    kinglocation.setPosition(board.square[j][i]->x * scale, board.square[j][i]->y * scale);
+                    kinglocation.setScale(sf::Vector2f(0.25, 0.25));
+                    window.draw(kinglocation);
+                    //
+                }
                 if (board.square[j][i]->highlight)
                 {
                     // galim sukurt sf vector ir taip cuter pakeist pos
                     highlightMove.setPosition(board.square[j][i]->x * scale, board.square[j][i]->y * scale);
                     window.draw(highlightMove);
                     
-                    std::cout << "DREW";
+                   // std::cout << "DREW";
                 }
             }  
         }
     }
-   // std::cout << "WOAH, its updated";
+   // std::cout << "WOAH, its updated";/
     //window.draw(highlightMove);
     window.display();
     }
