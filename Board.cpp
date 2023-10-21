@@ -7,7 +7,10 @@
 #include "Empty_Square.h"
 #include "Piece_textures.h"
 #include "King.h"
+#include "Rook.h"
 #include <iostream>
+#include "Bishop.h"
+#include "Queen.h"
 
 
 
@@ -30,12 +33,14 @@ public:
         }
     }
     Board() {
-        for (int i = 0; i < 8; ++i)
+        for (int i = 0; i < 8; ++i) // pakeist i x ir y
         {
             for (int j = 0; j < 8; ++j)
             {
-
-                if (i == 7 && j == 4)
+                // bool White = true
+                // bool black = false
+                // ir tada vietoj true/false tu dalyku padaryt, cleaner bus
+                if (i == 7 && j == 4) // White king
                 {
                     square[j][i] = std::make_shared<King>(j, i, true, false, pieceTextures.w_king_text);
                     WKingX = j;
@@ -43,13 +48,37 @@ public:
                     square[j][i]->isKing = true;
                     //board.square[j][i]->empty_square = false;
                 }
-                else if (i == 0 && j == 4)
+                else if (i == 0 && j == 4) // Black king
                 {
                     square[j][i] = std::make_shared<King>(j, i, false, false, pieceTextures.b_king_text);
                     BKingX = j;
                     BKingY = i;
                     square[j][i]->isKing = true;
                   
+                }
+                else if (i == 7 && j == 3)
+                {
+                    square[j][i] = std::make_shared<Queen>(j, i, true, false, pieceTextures.w_queen_text);
+                }
+                else if (i == 0 && j == 3)
+                {
+                    square[j][i] = std::make_shared<Queen>(j, i, false, false, pieceTextures.b_queen_text);
+                }
+                else if ( i == 7 && (j == 0 || j == 7) )
+                {
+                    square[j][i] = std::make_shared<Rook>(j, i, true, false, pieceTextures.w_rook_text);
+                }
+                else if (i == 0 && (j == 0 || j == 7))
+                {
+                    square[j][i] = std::make_shared<Rook>(j, i, false, false, pieceTextures.b_rook_text);
+                }
+                else if (i == 0 && (j == 2 || j == 5))
+                {
+                    square[j][i] = std::make_shared<Bishop>(j, i, false, false, pieceTextures.b_bishop_text);
+                }
+                else if (i == 7 && (j == 2 || j == 5))
+                {
+                    square[j][i] = std::make_shared<Bishop>(j, i, true, false, pieceTextures.w_bishop_text);
                 }
                 else
                 {
@@ -69,6 +98,63 @@ public:
     { // Function to check if move is legal
         
         // reikia dar check ar dabartyje king nera in check
+
+            // Moves to the right
+        
+        for (int i = piece->x + 1; i < 8; ++i)
+        {
+            //legalMoves.push_back(std::make_pair(i, y));
+            int x = piece->x;
+            int y = piece->y;
+           /* if (!square[i][y]->isEmpty)
+            {
+                i =
+            }*/
+        }
+
+        // Moves to the left
+        for (int i = piece->x - 1; i >= 0; --i)
+        {
+           // legalMoves.push_back(std::make_pair(i, y));
+        }
+
+        // Moves down
+        for (int i = piece->y + 1; i < 8; ++i)
+        {
+          //  legalMoves.push_back(std::make_pair(x, i));
+        }
+
+        // Moves up
+        for (int i = piece->y - 1; i >= 0; --i)
+        {
+            //legalMoves.push_back(std::make_pair(x, i));
+        }
+        //for (int i = 0; i < legalMOVES.size(); ++i)
+        //{
+        //    //padaryti bool isKnight (galima sokineti per pieces)
+        //    // jeigu isKnight tada break
+        //    
+        //    //ir dabar mes removinam moves (kitos pieces negali sokinet)
+        //    
+        //    //edge case castling ir en passant
+        //    if (piece->y - legalMOVES.at(i)->y > 0) // kertam i virsu
+        //    {
+        //        if (!legalMOVES.at(i)->isEmpty) // sitas uzimtas langelis
+        //        { // tai remove visus moves uz jo
+        //            for (int j = i; j >= 0; --j)
+        //            {
+        //                for (int k = 0; k < legalMOVES.size(); ++k)
+        //                {
+        //                    if (legalMOVES.at(k) == legalMOVES.at(j))
+        //                        legalMOVES.erase(legalMOVES.begin() + k);
+        //                }
+        //            }
+        //        }
+        //     }
+                 // else if i same eile
+                 // 
+           // if(square[legalMOVES[i]->x][])
+      //  }
         std::vector<std::shared_ptr<Piece>> legalMoves_copy;
         for (auto destination : legalMOVES)
         {
@@ -163,33 +249,6 @@ public:
         }
         return false;
     }
-    //void move(std::shared_ptr<Piece> piece, std::shared_ptr<Piece> destination, bool castle, bool passant) {
-    //    // Create a copy of the destination square
-    //    std::shared_ptr<Piece> tempDestination = square[destination->x][destination->y];
-    //    printf( "uwu");
-
-
-    //    // Update the destination square with the piece being moved
-    //    square[destination->x][destination->y] = piece;
-
-    //    // Update the source square as empty
-    //    square[piece->x][piece->y] = std::make_shared<Empty_Square>(piece->x, piece->y, false, true, Piece_Textures().b_knight_text);
-
-    //    // Implement castling logic or any other specific move handling here
-
-    //    // Update king positions if needed
-    //    if (piece->isKing) {
-    //        if (piece->isWhite) {
-    //            WKingX = destination->x;
-    //            WKingY = destination->y;
-    //        }
-    //        else {
-    //            BKingX = destination->x;
-    //            BKingY = destination->y;
-    //        }
-    //    }
-    //}
-
     void move(std::shared_ptr<Piece> piece, std::shared_ptr<Piece> destination, bool castle, bool passant){ // castle passant sutvarkyt dar 
         // piece doesnt change in the array
         for (auto move : legalMOVES)
@@ -221,40 +280,10 @@ public:
                 destination->isEmpty = false;
                square[pieceX][pieceY] = std::make_shared<Empty_Square>(pieceX, pieceY, false, true, pieceTextures.w_knight_text);
                 std::cout << "WWUWUW";
-                
-
-                //Piece piece_temp(piece->x, piece->y, piece->isWhite, piece->isEmpty, pieceTextures.b_bishop_text);//b bishop text, because this is not needed, so it is random texture 
-                //Piece destination_temp(destination->x, destination->y, destination->isWhite, destination->isEmpty, pieceTextures.b_bishop_text);//destination->sprite.getTexture()
-                //square[destination->x][destination->y] = piece;
-                //piece->x = destination_temp.x;
-                //piece->y = destination_temp.y;
-
-                // piece x y = destination x y
-                // destination x y = piece x y
-                // swap destyination su piece
-
-                
-                // sitas irgi neveikia (karalius pasivercia i white knight, o last langelis i juoda)
-              
-                // std::swap(piece->x, destination->x);
-               // std::swap(piece->y, destination->y);
-
-
-
-               /* std::swap(piece, destination);
-                piece->sprite.setTexture(*pieceTextures.w_knight_text);*/
-
-
-                //destination->isEmpty = true;
-                //destination->sprite.setTexture(*pieceTextures.w_knight_text);
-                
-                
-
-                //square[piece_temp.x][piece_temp.y] = std::make_shared<Empty_Square>(piece_temp.x, piece_temp.y, false, true, pieceTextures.w_knight_text);
-         
                 printf("NICE");
 
                  //Implement castling logic
+
                 for (int i = 0; i < 8; ++i)
                 {
                     for (int j = 0; j < 8; ++j) // Updating kings position
@@ -316,7 +345,6 @@ public:
        printf("function calculate_legal_moves called\n");
        std::vector<std::pair<int, int>> legalMoves_pair;
         
-       // cia galiu padaryti, kad atgaunu structa, ir tada pushbackinu i legalmoves.
        if (piece->isWhite)
        {
            legalMoves_pair = piece->legal_movesWhite();
@@ -336,8 +364,8 @@ public:
    {
        legalMOVES.clear();
    }
+
    std::vector<std::shared_ptr<Piece>> legalMOVES;
-}; extern Board board;
-//HIGHLIHT LEGAL MOVES
+}; extern Board board; // sutvarkyti mess su public ir private stuff.
 
 #endif // !BOARD_CPP

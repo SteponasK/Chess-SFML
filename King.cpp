@@ -5,6 +5,7 @@
 #include <memory>
 #include "Empty_Square.h"
 #include "Piece_Textures.h"
+#include "Board.cpp"
 
 
 King::King(int x, int y, bool isWhite, bool isEmpty,  std::shared_ptr<sf::Texture> texture)
@@ -94,6 +95,23 @@ std::vector<std::pair<int, int>>  King::legal_movesWhite() {
         legalMoves.push_back(std::make_pair(x + 0, y + 1));
 
     }
+    // need to remove highlight on same color piece
+    /*for (int i = y; i < 8; ++i)
+    {
+        for (int j = x; j < 8; ++j)
+        {
+            if (!board.square[j][i]->isEmpty && !board.square[j][i]->isWhite)
+            {
+                for (int k = 0; k < legalMoves.size(); ++k)
+                {
+                    if (board.square[j][i] == board.square[legalMoves.at(k).first][legalMoves.at(k).second])
+                        legalMoves.erase(legalMoves.begin() + k);
+                    std::cout << "\nremoving\n";
+                }
+            }
+            
+        }
+    }*/
 
     // padaryti more efficient, pirma suskaiciuot visus langelius aplinkui
     // tada if(blah blah) remove move

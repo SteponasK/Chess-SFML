@@ -11,7 +11,7 @@
 //    sprite.setTexture(*texture);
 //    sprite.setPosition(sf::Vector2f(row * scale, col * scale));
 //}
-//
+////k
 //void Pawn::move(std::shared_ptr<Piece>& piece_to_move,std::shared_ptr<Piece>& destination_square, bool& Turn) {
 //    std::vector<std::shared_ptr<Piece>>legal_moves;
 //    if (!Turn) {
