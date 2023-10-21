@@ -24,6 +24,8 @@ Board board;
 
 int main() //sjk dabar padaryti ->move() funkcija pawn klasei kad butu galima judeti-
 {
+    //board.currentBoard = std::make_shared<Board>(board);
+    // 
     // galima padaryti kad butu global scope, bet tada reiktu .initialise funkcijos
    // board.initialise();
     /*

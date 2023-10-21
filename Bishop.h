@@ -11,5 +11,4 @@ public:
     virtual std::vector<std::pair<int, int>> legal_movesWhite();
     virtual std::vector<std::pair<int, int>> legal_movesBlack();
 };
-
 #endif 

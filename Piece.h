@@ -35,6 +35,9 @@ public:
     bool isWhite;
     bool highlight = false; // Highlight the field if it's legal.
     bool isKing = false;
+    bool isPawn = false;
+    bool isRook = false;
+    bool isFirstMove = true;
     sf::Sprite sprite;
     std::vector<std::shared_ptr<Piece>> controlledSquares;
 };

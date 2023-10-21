@@ -1,22 +1,24 @@
-#include "King.h"
+#include "Knight.h"
 #include "Constants.h"
 #include <memory>
 #include "Board.cpp"
 
-King::King(int x, int y, bool isWhite, bool isEmpty, std::shared_ptr<sf::Texture> texture)
-    : Piece(x, y, isWhite, isEmpty, texture) { 
+Knight::Knight(int x, int y, bool isWhite, bool isEmpty, std::shared_ptr<sf::Texture> texture)
+    : Piece(x, y, isWhite, isEmpty, texture) {
     sprite.setTexture(*texture);
     sprite.setPosition(sf::Vector2f(x * scale, y * scale));
 }
 
-std::vector<std::pair<int, int>>  King::legal_movesWhite() {
+std::vector<std::pair<int, int>>  Knight::legal_movesWhite() {
     std::vector<std::pair<int, int>> legalMoves;
     std::vector<std::pair<int, int>> moveDirections = {
-    {-1, -1}, {0, -1}, {1, -1},
-    {-1, 0},           {1, 0},
-    {-1, 1}, {0, 1}, {1, 1}
+        {-1, -2},   {1, -2},
+    {-2, -1},           {2, -1},
+
+    {-2, 1},            {2, 1},
+        {-1, 2},    {1, 2}
     };
-    for (const auto& direction : moveDirections){
+    for (const auto& direction : moveDirections) {
         int newX = x + direction.first;
         int newY = y + direction.second;
 
@@ -26,28 +28,16 @@ std::vector<std::pair<int, int>>  King::legal_movesWhite() {
                 legalMoves.pop_back();
         }
     }
-    if (isFirstMove) {
-        if (board.square[7][7]->isRook && board.square[7][7]->isFirstMove) {
-            if (board.square[4][7]->isEmpty && board.square[5][7]->isEmpty
-                && board.square[6][7]->isEmpty) {
-                legalMoves.push_back(std::make_pair(6,7));
-            }
-        }
-        if (board.square[0][7]->isRook && board.square[0][7]->isFirstMove) {
-            if (board.square[1][7]->isEmpty && board.square[2][7]->isEmpty
-                && board.square[3][7]->isEmpty && board.square[4][7]->isEmpty) {
-                legalMoves.push_back(std::make_pair(2, 7));
-            }
-        }
-    }
     return legalMoves;
 }
-std::vector<std::pair<int, int>>  King::legal_movesBlack() {
+std::vector<std::pair<int, int>>  Knight::legal_movesBlack() {
     std::vector<std::pair<int, int>> legalMoves;
     std::vector<std::pair<int, int>> moveDirections = {
-    {-1, -1}, {0, -1}, {1, -1},
-    {-1, 0},           {1, 0},
-    {-1, 1}, {0, 1}, {1, 1}
+        {-1, -2},   {1, -2},
+    {-2, -1},           {2, -1},
+
+    {-2, 1},            {2, 1},
+        {-1, 2},    {1, 2}
     };
     for (const auto& direction : moveDirections) {
         int newX = x + direction.first;
@@ -59,6 +49,5 @@ std::vector<std::pair<int, int>>  King::legal_movesBlack() {
                 legalMoves.pop_back();
         }
     }
-    // neturi castling logic
     return legalMoves;
 }

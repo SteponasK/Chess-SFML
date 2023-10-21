@@ -1,19 +1,14 @@
-//#ifndef PAWN_H
-//#define PAWN_H
-//
-//#include "Piece.h" 
-//#include <SFML/Graphics.hpp>
-//#include <memory>
-//
-//class Pawn : public Piece {
-//public:
-//    Pawn(bool isWhite, int row, int col, std::shared_ptr<sf::Texture> texture);
-//    void move(std::shared_ptr<Piece>& piece_to_move, std::shared_ptr<Piece>& destination_square, bool& Turn) override;
-//    
-//    bool legal_move();
-//private:
-//    bool first_Move;
-//};
-//
-//#endif // PAWN_H
+#ifndef PAWN_H
+#define PAWN_H
 
+#include "Piece.h"
+#include <SFML/Graphics.hpp>
+#include <memory>
+
+class Pawn : public Piece {
+public:
+    Pawn(int x, int y, bool isWhite, bool isEmpty, std::shared_ptr<sf::Texture> texture);
+    virtual std::vector<std::pair<int, int>> legal_movesWhite();
+    virtual std::vector<std::pair<int, int>> legal_movesBlack();
+};
+#endif

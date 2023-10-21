@@ -1,90 +1,72 @@
-//#include "Pawn.h"
-//#include "Constants.h"
-//#include <iostream>
-//#include "Board.cpp"
-//#include <memory>
-//#include "Empty_Square.h"
-//#include "Piece_Textures.h"
-//
-//Pawn::Pawn(bool isWhite, int row, int col, std::shared_ptr<sf::Texture> texture)
-//    : Piece(isWhite, row, col, figure), first_Move(false) { // Constructor
-//    sprite.setTexture(*texture);
-//    sprite.setPosition(sf::Vector2f(row * scale, col * scale));
-//}
-////k
-//void Pawn::move(std::shared_ptr<Piece>& piece_to_move,std::shared_ptr<Piece>& destination_square, bool& Turn) {
-//    std::vector<std::shared_ptr<Piece>>legal_moves;
-//    if (!Turn) {
-//        
-//        if (col == 6) // reiskiasi default vietoje (pirmas ejimas)
-//        {
-//            if (board.square[row][col-1]->empty_square)
-//            {
-//                std::cout << "EMOTY SQUARE";
-//                legal_moves.push_back(board.square[row][col - 1]);
-//
-//                if (board.square[row][col - 2]->empty_square)
-//                    legal_moves.push_back(board.square[row][col - 2]);
-//            }
-//        }
-//        else if(board.square[row][col - 1]->empty_square)
-//            legal_moves.push_back(board.square[row][col - 1]);
-//        if (board.square[row + 1][col - 1]->isWhite == false)
-//        {
-//            std::cout <<"selecetd";
-//            legal_moves.push_back(board.square[row + 1][col - 1]);
-//        }
-//            
-//        if (board.square[row - 1][col - 1]->isWhite == false)
-//            legal_moves.push_back(board.square[row - 1][col - 1]);
-//    }
-//    else
-//    {
-//        if (col == 1) // reiskiasi default vietoje (pirmas ejimas)
-//        {
-//            if (board.square[row][col + 1]->empty_square)
-//            {
-//                std::cout << "EMOTY SQUARE";
-//                legal_moves.push_back(board.square[row][col + 1]);
-//
-//                if (board.square[row][col + 2]->empty_square)
-//                    legal_moves.push_back(board.square[row][col + 2]);
-//            }
-//        }
-//        else if (board.square[row][col + 1]->empty_square)
-//            legal_moves.push_back(board.square[row][col + 1]);
-//        if (!board.square[row + 1][col + 1]->empty_square == false && board.square[row + 1][col + 1]->isWhite)
-//            legal_moves.push_back(board.square[row + 1][col - 1]);
-//        if (!board.square[row - 1][col + 1]->empty_square == false && board.square[row - 1][col + 1]->isWhite)
-//            legal_moves.push_back(board.square[row - 1][col - 1]);
-//    }
-//    if (legal_moves.empty())
-//    {
-//        std::cout << "WTFEMPTY";
-//    }
-//    for (auto legal_move : legal_moves)
-//    {
-//        if (legal_move->col == destination_square->col && legal_move->row == destination_square->row)
-//        {
-//            std::cout << "TRYING TO CHANGE";
-//            int temp_col = col;
-//            int temp_row = row;
-//             col = destination_square->col;
-//             row = destination_square->row;
-//             destination_square->col = temp_col;
-//             destination_square->row = temp_row;
-//            Turn = (Turn == 1) ? 0 : 1;
-//            break;
-//        }
-//    }
-//}
-//bool Pawn::legal_move() {
-//    if (isWhite)
-//    {
-//        if (first_Move)
-//        {
-//
-//        }
-//    }
-//    return true;
-//}
+#include "Pawn.h"
+#include "Constants.h"
+#include <memory>
+#include "Board.cpp"
+
+Pawn::Pawn(int x, int y, bool isWhite, bool isEmpty, std::shared_ptr<sf::Texture> texture)
+    : Piece(x, y, isWhite, isEmpty, texture) {
+    sprite.setTexture(*texture);
+    sprite.setPosition(sf::Vector2f(x * scale, y * scale));
+}
+
+std::vector<std::pair<int, int>>  Pawn::legal_movesWhite() {
+    std::vector<std::pair<int, int>> legalMoves;
+
+    std::vector<std::pair<int, int>> captureDirection = {
+        {-1, -1},   {1, -1}
+    };
+    for (const auto& direction : captureDirection) {
+        int newX = x + direction.first;
+        int newY = y + direction.second;
+        if (newX >= 0 && newY >= 0 && newX < 8 && newY < 8) {
+            legalMoves.push_back(std::make_pair(newX, newY));
+            if (board.square[newX][newY]->isEmpty || board.square[newX][newY]->isWhite){
+                legalMoves.pop_back();
+            }
+        }
+    }
+    if (y - 1 >= 0 && y < 8  && board.square[x][y-1]->isEmpty) {
+        legalMoves.push_back(std::make_pair(x, y - 1));
+        if (y == 6 && board.square[x][y-2]->isEmpty) {
+            legalMoves.push_back(std::make_pair(x, y - 2));
+        }
+    }
+    std::pair<Piece, Piece> previousMove = board.getPreviousMove();
+    if (previousMove.first.isPawn && previousMove.first.y == 1
+        && previousMove.second.y == 3) {
+        if (y == 3) {
+            if ((x - 1 < 8 && x - 1 >= 0 && x - 1 == previousMove.second.x) ||
+                (x + 1 < 8 && x + 1 >= 0 && x + 1 == previousMove.second.x)) {
+                legalMoves.push_back(std::make_pair(previousMove.second.x, previousMove.second.y));
+            }
+        }  
+    }
+    return legalMoves;
+}
+std::vector<std::pair<int, int>>  Pawn::legal_movesBlack() {
+    std::vector<std::pair<int, int>> legalMoves;
+
+
+    std::vector<std::pair<int, int>> captureDirection = {
+        {-1, 1},   {1, 1}
+    };
+    for (const auto& direction : captureDirection) {
+        int newX = x + direction.first;
+        int newY = y + direction.second;
+        if (newX >= 0 && newY >= 0 && newX < 8 && newY < 8) {
+            legalMoves.push_back(std::make_pair(newX, newY));
+            if (board.square[newX][newY]->isEmpty || (!board.square[newX][newY]->isWhite
+                && board.square[newX][newY]->isEmpty)) {
+                legalMoves.pop_back();
+            }
+        }
+    }
+    if (y - 1 >= 0 && y < 8 && board.square[x][y + 1]->isEmpty) {
+        legalMoves.push_back(std::make_pair(x, y + 1));
+        if (y == 1 && board.square[x][y + 2]->isEmpty) {
+            legalMoves.push_back(std::make_pair(x, y + 2));
+        }
+    }
+    // neturi en passant logic
+    return legalMoves;
+}
