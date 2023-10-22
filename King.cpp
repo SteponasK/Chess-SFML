@@ -28,14 +28,13 @@ std::vector<std::pair<int, int>>  King::legal_movesWhite() {
     }
     if (isFirstMove) {
         if (board.square[7][7]->isRook && board.square[7][7]->isFirstMove) {
-            if (board.square[4][7]->isEmpty && board.square[5][7]->isEmpty
-                && board.square[6][7]->isEmpty) {
+            if (board.square[5][7]->isEmpty && board.square[6][7]->isEmpty) {
                 legalMoves.push_back(std::make_pair(6,7));
             }
         }
         if (board.square[0][7]->isRook && board.square[0][7]->isFirstMove) {
             if (board.square[1][7]->isEmpty && board.square[2][7]->isEmpty
-                && board.square[3][7]->isEmpty && board.square[4][7]->isEmpty) {
+                && board.square[3][7]->isEmpty) {
                 legalMoves.push_back(std::make_pair(2, 7));
             }
         }
@@ -57,6 +56,19 @@ std::vector<std::pair<int, int>>  King::legal_movesBlack() {
             legalMoves.push_back(std::make_pair(newX, newY));
             if (!board.square[newX][newY]->isWhite && !board.square[newX][newY]->isEmpty)
                 legalMoves.pop_back();
+        }
+    }
+    if (isFirstMove) {
+        if (board.square[7][0]->isRook && board.square[7][0]->isFirstMove) {
+            if (board.square[5][0]->isEmpty && board.square[6][0]->isEmpty) {
+                legalMoves.push_back(std::make_pair(6, 0));
+            }
+        }
+        if (board.square[0][0]->isRook && board.square[0][0]->isFirstMove) {
+            if (board.square[1][0]->isEmpty && board.square[2][0]->isEmpty
+                && board.square[3][0]->isEmpty) {
+                legalMoves.push_back(std::make_pair(2, 0));
+            }
         }
     }
     // neturi castling logic

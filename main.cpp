@@ -22,24 +22,7 @@ bool bKingMoved = false;
 Board board;
 
 
-int main() //sjk dabar padaryti ->move() funkcija pawn klasei kad butu galima judeti-
-{
-    //board.currentBoard = std::make_shared<Board>(board);
-    // 
-    // galima padaryti kad butu global scope, bet tada reiktu .initialise funkcijos
-   // board.initialise();
-    /*
-        TO DO:
-        KAI PAJUDA PAWN, PADARYTI KAD TUSTI LANGELIAI CORRECTLY UZSIPILDYTU, NES DABAR NESAMONE // DONE
-        KADANTI move() funkcija turi legal_moves in std::vector, tai tuos langelius butu galima highlight
-        // Sutvarkyt markalyze visa
-
-
-        10-09
-        Kai darau pawn negali kirsti kito pawn, bet gali kirsti tuscia langeli.
-        Padaryti logika jeigu row == 0 arba row == 7, kad kai skaiciuoja row+1 || row-1 neuzcrashintu
-    
-    */
+int main(){
     // Padaryti pieces values protected, jas gauti by getter function.
     sf::RenderWindow window(sf::VideoMode(800, 800), "Chess");
     scale = window.getSize().x / 8;
@@ -50,7 +33,7 @@ int main() //sjk dabar padaryti ->move() funkcija pawn klasei kad butu galima ju
         return 1;
     }
     sf::Sprite board_sprite(boardTexture);
-
+    
     sf::Sprite highlightMove;
     sf::Texture hightlightMoveText;
     hightlightMoveText.loadFromFile("Resources/highlight_circle.png");
@@ -85,7 +68,7 @@ int main() //sjk dabar padaryti ->move() funkcija pawn klasei kad butu galima ju
                     {
                         if (board.square[j][i])
                         {
-
+                            
                             if (board.square[j][i]->sprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosition)))
                             {
                                 if (!selected_square1)
@@ -139,11 +122,15 @@ int main() //sjk dabar padaryti ->move() funkcija pawn klasei kad butu galima ju
                                     else
                                     {
                                         selected_square2 = board.square[j][i];
-                                        /*jeigu returnina false, tada nekeist turn*/board.move(selected_square1, selected_square2, false, false);
+                                        /*jeigu returnina false, tada nekeist turn*/
+                                        
+                                        board.move(selected_square1, selected_square2, false, false);
+                                        selected_square1->isFirstMove = false;
                                         board.removeHighlighted_moves();
                                         board.removeLegal_moves();
                                         selected_square1 = nullptr;
                                         selected_square2 = nullptr;
+                                        
                                         // changge turn/
                                     }
                                 }
@@ -157,6 +144,9 @@ int main() //sjk dabar padaryti ->move() funkcija pawn klasei kad butu galima ju
         // Other events
     
     // Game logic
+        //if (!board.isKingInCheck(board, false)) {
+        //    //std::cout << "!KING IN CHECK\n";
+        //}
     window.clear(sf::Color::Black);
     window.draw(board_sprite);
     for (int i = 0; i < 8; ++i)
@@ -168,7 +158,7 @@ int main() //sjk dabar padaryti ->move() funkcija pawn klasei kad butu galima ju
             {
                 board.square[i][j]->sprite.setPosition(scale * board.square[i][j]->x, scale * board.square[i][j]->y);
                 if(!board.square[i][j]->isEmpty)
-                window.draw(board.square[i][j]->sprite);
+                    window.draw(board.square[i][j]->sprite);
                 if (board.square[j][i]->isKing)
                 {
                     kinglocation.setPosition(board.square[j][i]->x * scale, board.square[j][i]->y * scale);

@@ -11,11 +11,11 @@ Empty_Square::Empty_Square(int x, int y, bool isWhite, bool isEmpty, std::shared
     //We just do nothing
     void Empty_Square::move(std::shared_ptr<Piece>& destination_square, bool Capture, bool& Turn) {}
     std::vector<std::pair<int, int>> Empty_Square::legal_movesWhite() {
-        std::cout << "EmptySquare fnc\n";
+        //std::cout << "EmptySquare fnc\n";
         std::vector<std::pair<int, int>> pair;
         return pair; }
     std::vector<std::pair<int, int>> Empty_Square::legal_movesBlack() {
-        std::cout << "EmptySquare fnc\n";
+     //   std::cout << "EmptySquare fnc\n";
         std::vector<std::pair<int, int>> pair;
         return pair; }
     bool isEmpty;

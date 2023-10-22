@@ -2,6 +2,7 @@
 #include "Constants.h"
 #include <memory>
 #include "Board.cpp"
+#include <iostream>
 
 Knight::Knight(int x, int y, bool isWhite, bool isEmpty, std::shared_ptr<sf::Texture> texture)
     : Piece(x, y, isWhite, isEmpty, texture) {
@@ -49,5 +50,6 @@ std::vector<std::pair<int, int>>  Knight::legal_movesBlack() {
                 legalMoves.pop_back();
         }
     }
+    std::cout << "knight move fnc called black\n";
     return legalMoves;
 }
