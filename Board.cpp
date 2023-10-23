@@ -14,10 +14,13 @@
 #include "Knight.h"
 #include "Pawn.h"
 #include "Constants.h"
+#include <Windows.h>
 
-
+// bugas, nes kiekvienoje legalmoves fnc naudoja board, o ne tempboardus
+// tsg i kiekvina funkcija pluggint boarda ir tada pakeist is board i ta board
 class Board {
 public:
+    //std::shared_ptr<Board> boardPointer = nullptr;
     int WKingX;
     int WKingY;
     int BKingX;
@@ -27,10 +30,30 @@ public:
 
     }*/
     Board(const Board& other) { // sita constructor padaryt private
+       // boardPointer = std::shared_ptr<Board>(this);
+        // deep copy
         for (int i = 0; i < numCols; i++) {
             for (int j = 0; j < numRows; j++) {
                 if (other.square[i][j]) {
-                    this->square[i][j] = std::make_shared<Piece>(*other.square[i][j]);
+                    this->square[i][j] = other.square[i][j]->clone();
+                   // this->square[i][j]->boardPointer = boardPointer;
+                   
+                   // std::cout << "called";
+                   /* if (other.square[i][j]->isKing) {
+                        this->square[i][j] = std::make_shared<King>(*other.square[i][j]);*/
+                    /*else if (other.square[i][j]->isQueen)
+                        this->square[i][j] = std::make_shared<Queen>(*other.square[i][j]);
+                    else if (other.square[i][j]->isBishop)
+                        this->square[i][j] = std::make_shared<Bishop>(*other.square[i][j]);
+                    else if (other.square[i][j]->isKnight)
+                        this->square[i][j] = std::make_shared<Knight>(*other.square[i][j]);
+                    else if (other.square[i][j]->isRook)
+                        this->square[i][j] = std::make_shared<Rook>(*other.square[i][j]);
+                    else if (other.square[i][j]->isPawn)
+                        this->square[i][j] = std::make_shared<Pawn>(*other.square[i][j]);
+                    else
+                        this->square[i][j] = std::make_shared<Empty_Square>(*other.square[i][j]);*/
+                    
                 }
                 else {
                     this->square[i][j] = nullptr;
@@ -39,24 +62,8 @@ public:
             }
         }
     }
-    //Board(const Board& other, int kingX, bool isWhite, bool kingX_default) {
-    //    
-    //    for (int i = 0; i < numCols; i++) {
-    //        for (int j = 0; j < numRows; j++) {
-    //            if (other.square[i][j]) {
-    //                this->square[i][j] = std::make_shared<Piece>(*other.square[i][j]);
-    //            }
-    //            else {
-    //                this->square[i][j] = nullptr;
-    //            }
-    //        }
-    //    }
-    //    
-
-    //        //other.square[kingX_default][kingY];
-
-    //}
     Board() {
+      //  boardPointer = std::shared_ptr<Board>(this);
         for (int i = 0; i < 8; ++i) // pakeist i x ir y
         {
             for (int j = 0; j < 8; ++j)
@@ -71,7 +78,8 @@ public:
                     WKingX = j;
                     WKingY = i; 
                     square[j][i]->isKing = true;
-                    //board.square[j][i]->empty_square = false;
+                   // square[j][i]->boardPointer = boardPointer;
+                   // board.square[j][i]->empty_square = false;
                 }
                 else if (i == 0 && j == 4) // Black king
                 {
@@ -79,62 +87,79 @@ public:
                     BKingX = j;
                     BKingY = i;
                     square[j][i]->isKing = true;
+                   // square[j][i]->boardPointer = boardPointer;
                   
                 }
                 else if (i == 7 && j == 3)
                 {
                     square[j][i] = std::make_shared<Queen>(j, i, true, false, pieceTextures.w_queen_text);
+                    square[j][i]->isQueen = true;
+                   // square[j][i]->boardPointer = boardPointer;
                 }
                 else if (i == 0 && j == 3)
                 {
                     square[j][i] = std::make_shared<Queen>(j, i, false, false, pieceTextures.b_queen_text);
+                    square[j][i]->isQueen = true;
+                   // square[j][i]->boardPointer = boardPointer;
                 }
                 else if ( i == 7 && (j == 0 || j == 7) )
                 {
                     square[j][i] = std::make_shared<Rook>(j, i, true, false, pieceTextures.w_rook_text);
                     square[j][i]->isRook = true;
+                    //square[j][i]->boardPointer = boardPointer;
                 }
                 else if (i == 0 && (j == 0 || j == 7))
                 {
                     square[j][i] = std::make_shared<Rook>(j, i, false, false, pieceTextures.b_rook_text);
                     square[j][i]->isRook = true;
+                    //square[j][i]->boardPointer = boardPointer;
                 }
                 else if (i == 0 && (j == 2 || j == 5))
                 {
                     square[j][i] = std::make_shared<Bishop>(j, i, false, false, pieceTextures.b_bishop_text);
+                    square[j][i]->isBishop = true;
+                   // square[j][i]->boardPointer = boardPointer;
                 }
                 else if (i == 7 && (j == 2 || j == 5))
                 {
                     square[j][i] = std::make_shared<Bishop>(j, i, true, false, pieceTextures.w_bishop_text);
+                    square[j][i]->isBishop = true;
+                    //square[j][i]->boardPointer = boardPointer;
                 }
                 else if (i == 0 && (j == 1 || j == 6))
                 {
                     square[j][i] = std::make_shared<Knight>(j, i, false, false, pieceTextures.b_knight_text);
-
+                    square[j][i]->isKnight = true;
+                   // square[j][i]->boardPointer = boardPointer;
                 }
                 else if (i == 7 && (j == 1 || j == 6))
                 {
                     square[j][i] = std::make_shared<Knight>(j, i, true, false, pieceTextures.w_knight_text);
+                    square[j][i]->isKnight = true;
+                    //square[j][i]->boardPointer = boardPointer;
                 }
                 else if (i == 1)
                 {
                     square[j][i] = std::make_shared<Pawn>(j, i, false, false, pieceTextures.b_pawn_text);
                     square[j][i]->isPawn = true;
+                   // square[j][i]->boardPointer = boardPointer;
                 }
                 else if (i == 6)
                 {
                     square[j][i] = std::make_shared<Pawn>(j, i, true, false, pieceTextures.w_pawn_text);
                     square[j][i]->isPawn = true;
+                   // square[j][i]->boardPointer = boardPointer;
                 }
                 else
                 {
                     square[j][i] = std::make_shared<Empty_Square>(j, i, false, true, pieceTextures.b_knight_text);
-                   
+                    square[j][i]->isEmpty = true;
+                   // square[j][i]->boardPointer = boardPointer;
                 }
             }
         }
     }
-
+    
     const int numRows = 8;
     const int numCols = 8;
     std::array<std::array<std::shared_ptr<Piece>, 8>, 8 > square;
@@ -167,8 +192,11 @@ public:
         
      
         std::vector<std::shared_ptr<Piece>> legalMoves_copy;
+        system("CLS");
         for (auto destination : legalMOVES)
         {
+            
+            std::cout << "checking the move\n";
             Board tempBoard(board);
             std::shared_ptr<Piece> tempPiece = tempBoard.square[piece->x][piece->y];
             std::shared_ptr<Piece> tempDestination = tempBoard.square[destination->x][destination->y];
@@ -180,16 +208,25 @@ public:
                 }
                 continue;
             }
-            tempBoard.calculate_legal_moves(tempPiece);
-            std::cout << "check_move fnc tmepboard legal move size: " << tempBoard.legalMOVES.size() << std::endl;
+            tempBoard.calculate_legal_moves(tempPiece, tempBoard);
+           // std::cout << "check_move fnc tmepboard legal move size: " << tempBoard.legalMOVES.size() << std::endl;
             tempBoard.move(tempPiece, tempDestination, false, false);
-           // if (tempPiece->isWhite) {
+            std::cout << "\nMOVE COORDS\n";
+            std::cout << ' ' << tempBoard.getPreviousMove().first.x << tempBoard.getPreviousMove().first.y << "\n";
+            std::cout << ' ' << tempBoard.getPreviousMove().second.x << tempBoard.getPreviousMove().second.y << "\n";
+            std::cout << "\nMOVE COORDS\n";
+            // if (tempPiece->isWhite) {
               //  tempBoard.WKingX = 
            // }
             if (!isKingInCheck(tempBoard, tempPiece->isWhite))
             {
+                std::cout << "NOT IN CHECK";
                 legalMoves_copy.push_back(destination);
             }
+            else {
+                std::cout << "King in check!\n";
+            }
+            //legalMoves_copy.push_back(destination);
         }
         
         legalMOVES = legalMoves_copy;
@@ -201,12 +238,14 @@ public:
     bool isKingInCheck(Board board, bool king_color) // kazkas blogai su currentpiece, neduoda legal moves
     {// Check implementation needed
         Board tempBoard(board);
-        std::cout << "\n\n\n\n\n\n\n\niskingincheck called\n";
+      //  std::cout << "\n\n\n\n\n\n\n\niskingincheck called\n";
      //  std::cout << "FUNCTION CALLED\n";
         for (int i = 0; i < 8; ++i) {
             for (int j = 0; j < 8; ++j) {
                 std::shared_ptr<Piece> currentPiece = tempBoard.square[j][i];
-                
+                if (!tempBoard.square[j][i]) {
+                   // std::cout << "iskingincheck square is nullptr\n";
+                }
                 if (currentPiece->isKing) {
                     if (currentPiece->isWhite) {
                         tempBoard.WKingX = currentPiece->x;
@@ -229,79 +268,40 @@ public:
         {
             for (int j = 0; j < 8; ++j)
             {
-                std::shared_ptr<Piece> currentPiece = tempBoard.square[j][i];
+                auto currentPiece = tempBoard.square[j][i];
 
                 if (currentPiece->isWhite != king_color && !currentPiece->isEmpty) // randam enemy pieces
                 { // jeigu piece yra juoda, 
-                    std::cout << "cords: " << currentPiece->x << currentPiece->y << std::endl;
                     std::vector<std::pair<int, int>>  opponentMoves;
-                  //  std::cout << currentPiece->x <<" y: " << currentPiece->y << std::endl;
-                    tempBoard.calculate_legal_moves(currentPiece);
-                    std::cout << "legalmove size: " << tempBoard.legalMOVES.size() << std::endl;
-                    if (!tempBoard.legalMOVES.empty()) {
-                        for (int i = 0; i < 10; ++i) {
-                            std::cout << std::endl;
-                            std::cout << "LEGALMOVES TEMP IS NOT EMPTY";
-                        }
-                    }
+
+                    tempBoard.calculate_legal_moves(currentPiece, tempBoard);
+                   // std::cout << "legalmove size: " << tempBoard.legalMOVES.size() << std::endl;
                     for (auto move : tempBoard.legalMOVES)
                     {
-                        std::cout << "GOING THRU THE MOVES\n";
+                        //std::cout << "ciklinu";
                         if (currentPiece->isWhite)
                         {
-                            if (move->x == board.BKingX && move->y == board.BKingY)
-                                std::cout << "\n\n\n\n\nPRISILIETE\n\n\n\n";
-                            return true;
+                            /*std::cout << "Bmove x  y: " << move->x << ' ' << move->y
+                                << "   king x y:" << tempBoard.BKingX << ' ' << tempBoard.BKingY << std::endl;*/
+                            if (move->x == tempBoard.BKingX && move->y == tempBoard.BKingY)
+                                return true;
                         }
                         else
                         {
-                            std::cout << "COMPARING BLACK MOVES";
-                            if (move->x == board.WKingX && move->y == board.WKingY)
-                                std::cout << "\n\n\n\n\nPRISILIETE\n\n\n\n";
-                            return true;
+                            /*std::cout << "Wmove x  y: " << move->x << ' ' << move->y
+                                << "   king x y:" << tempBoard.WKingX << ' ' << tempBoard.WKingY << std::endl;*/
+                            if (move->x == tempBoard.WKingX && move->y == tempBoard.WKingY)
+                                return true;
                         }
                         tempBoard.removeLegal_moves();
                     }
-                    
-                    
-                    //if (currentPiece->isWhite)
-                    //{
-                    //  //  std::cout << "called white moves\n";
-                    //    opponentMoves = currentPiece->legal_movesWhite();
-                    //   
-                    //   // std::cout << "white moves vector: " << opponentMoves.size() << std::endl;
-                    //}
-                    //else 
-                    //{
-                    //   // std::cout << "called black moves\n";
-                    //    opponentMoves = currentPiece->legal_movesBlack();
-                    //   // std::cout << "black moves vector: " << opponentMoves.size() << std::endl;
-                    //}
-                  //  std::cout << "size of opponen moves vector: " << opponentMoves.size() << std::endl;
-                    /*for (auto move : opponentMoves)
-                    {
-                        std::cout << "GOING THRU THE MOVES\n";
-                        if (currentPiece->isWhite)
-                        {
-                            if (move.first == board.BKingX && move.second == board.BKingY)
-                                std::cout << "\n\n\n\n\nPRISILIETE\n\n\n\n";
-                                return true;
-                        }
-                        else
-                        {
-                            std::cout << "COMPARING BLACK MOVES";
-                            if (move.first == board.WKingX && move.second == board.WKingY)
-                                std::cout << "\n\n\n\n\nPRISILIETE\n\n\n\n";
-                                return true;
-                        }
-                    }*/
                 }
             }
         }
         return false;
     }
     std::vector<std::pair<Piece, Piece>> Moves;
-    std::pair<Piece, Piece> getPreviousMove() {
+    std::pair<Piece, Piece> getPreviousMove() const {
         
         if (Moves.empty()) {
             Piece piece(0, 0, false, false, pieceTextures.empty_square);
@@ -310,13 +310,13 @@ public:
         return Moves.back();
     }
 
-    void move(std::shared_ptr<Piece> piece, std::shared_ptr<Piece> destination, bool castle, bool passant){ // castle passant sutvarkyt dar 
+    bool move(std::shared_ptr<Piece> piece, std::shared_ptr<Piece> destination, bool castle, bool passant){ // castle passant sutvarkyt dar 
         // piece doesnt change in the array
         for (auto move : legalMOVES)
         {
             if (move == destination)
             {
-                Turn = (Turn ? 0 : 1);
+                
                 Moves.push_back(std::make_pair(*piece, *destination)); // castling logic idk
                 int pieceX = piece->x;
                 int pieceY = piece->y;
@@ -396,11 +396,11 @@ public:
               //  std::cout << std::endl << WKingX << WKingY << std::endl;
               //  std::cout << square[WKingX][WKingY]->isWhite;
               //  std::cout << square[WKingX][WKingY]->isKing;
-                break;
+                return true;
             }
         }
         
-        
+        return false;
     }
    void highlightMoves_update()
     {
@@ -430,21 +430,21 @@ public:
            }
        }
    }
-   void calculate_legal_moves(std::shared_ptr<Piece> piece) // surandam legal moves
+   void calculate_legal_moves(std::shared_ptr<Piece> piece, const Board& tempBoard) // surandam legal moves
    {
      //  std::cout << piece->x << ' ' << piece->y << ' ' << piece->isKing << '\n';
      //  printf("function calculate_legal_moves called\n");
        std::vector<std::pair<int, int>> legalMoves_pair;
-        
+     //  std::cout << "calculating legal moves ";
        if (piece->isWhite)
        {
-           legalMoves_pair = piece->legal_movesWhite();
-           std::cout << " calculate_legal_moves fnc called white\n";
+           legalMoves_pair = piece->legal_movesWhite(tempBoard);
+          // std::cout << " calculate_legal_moves fnc called white\n";
        }
        else
        {
-           legalMoves_pair = piece->legal_movesBlack();
-           std::cout << " calculate_legal_moves fnc called black\n";
+           legalMoves_pair = piece->legal_movesBlack(tempBoard);
+          // std::cout << " calculate_legal_moves fnc called black\n";
        }
        for (auto pair : legalMoves_pair)
        {

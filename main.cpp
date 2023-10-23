@@ -80,7 +80,7 @@ int main(){
                                             if (board.square[j][i]->isWhite == true) // galima i same spalva
                                             {
                                                 selected_square1 = board.square[j][i];
-                                                board.calculate_legal_moves(selected_square1);
+                                                board.calculate_legal_moves(selected_square1, board);
                                                 board.check_move(board, selected_square1);
                                                 board.highlightMoves_update();
                                             }
@@ -93,7 +93,7 @@ int main(){
                                             if (board.square[j][i]->isWhite == false) // galima i same spalva
                                             {
                                                 selected_square1 = board.square[j][i];
-                                                board.calculate_legal_moves(selected_square1); // del sito
+                                                board.calculate_legal_moves(selected_square1, board); // del sito
                                                 board.check_move(board, selected_square1);
                                                 board.highlightMoves_update(); 
                                             }
@@ -114,7 +114,7 @@ int main(){
                                         selected_square1 = board.square[j][i];
                                         board.removeHighlighted_moves();
                                         board.removeLegal_moves();
-                                        board.calculate_legal_moves(board.square[j][i]); // isviso galima sita padet ne i loopa o veliau
+                                        board.calculate_legal_moves(selected_square1, board); // isviso galima sita padet ne i loopa o veliau
                                         board.check_move(board, board.square[j][i]);
                                         board.highlightMoves_update();
                                         break;
@@ -124,7 +124,8 @@ int main(){
                                         selected_square2 = board.square[j][i];
                                         /*jeigu returnina false, tada nekeist turn*/
                                         
-                                        board.move(selected_square1, selected_square2, false, false);
+                                        if(board.move(selected_square1, selected_square2, false, false))
+                                            Turn = (Turn ? 0 : 1);
                                         selected_square1->isFirstMove = false;
                                         board.removeHighlighted_moves();
                                         board.removeLegal_moves();
@@ -157,7 +158,7 @@ int main(){
             if (board.square[i][j])
             {
                 board.square[i][j]->sprite.setPosition(scale * board.square[i][j]->x, scale * board.square[i][j]->y);
-                if(!board.square[i][j]->isEmpty)
+                if (!board.square[i][j]->isEmpty)
                     window.draw(board.square[i][j]->sprite);
                 if (board.square[j][i]->isKing)
                 {

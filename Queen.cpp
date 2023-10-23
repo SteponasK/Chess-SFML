@@ -9,7 +9,7 @@ Queen::Queen(int x, int y, bool isWhite, bool isEmpty, std::shared_ptr<sf::Textu
     sprite.setPosition(sf::Vector2f(x * scale, y * scale));
 }
 
-std::vector<std::pair<int, int>>  Queen::legal_movesWhite() {
+std::vector<std::pair<int, int>>  Queen::legal_movesWhite(const Board& tempBoard) {
     std::vector<std::pair<int, int>> legalMoves;
 
     std::vector<std::pair<int, int>> moveDirections = {
@@ -24,8 +24,8 @@ std::vector<std::pair<int, int>>  Queen::legal_movesWhite() {
         while (newX >= 0 && newX < 8 && newY >= 0 && newY < 8) {
             legalMoves.push_back(std::make_pair(newX, newY));
 
-            if (!board.square[newX][newY]->isEmpty) {
-                if (board.square[newX][newY]->isWhite)
+            if (!tempBoard.square[newX][newY]->isEmpty) {
+                if (tempBoard.square[newX][newY]->isWhite)
                     legalMoves.pop_back();
                 break;
             }
@@ -35,7 +35,7 @@ std::vector<std::pair<int, int>>  Queen::legal_movesWhite() {
     }
     return legalMoves;
 }
-std::vector<std::pair<int, int>>  Queen::legal_movesBlack() {
+std::vector<std::pair<int, int>>  Queen::legal_movesBlack(const Board& tempBoard) {
     std::vector<std::pair<int, int>> legalMoves;
     std::vector<std::pair<int, int>> moveDirections = {
     {-1, -1}, {0, -1}, {1, -1},
@@ -49,8 +49,8 @@ std::vector<std::pair<int, int>>  Queen::legal_movesBlack() {
         while (newX >= 0 && newX < 8 && newY >= 0 && newY < 8) {
             legalMoves.push_back(std::make_pair(newX, newY));
 
-            if (!board.square[newX][newY]->isEmpty) {
-                if (!board.square[newX][newY]->isWhite)
+            if (!tempBoard.square[newX][newY]->isEmpty) {
+                if (!tempBoard.square[newX][newY]->isWhite)
                     legalMoves.pop_back();
                 break;
             }
