@@ -22,7 +22,9 @@ bool bKingMoved = false;
 Board board;
 
 
+
 int main(){
+    bool checkmate = false;
     // Padaryti pieces values protected, jas gauti by getter function.
     sf::RenderWindow window(sf::VideoMode(800, 800), "Chess");
     scale = window.getSize().x / 8;
@@ -80,9 +82,13 @@ int main(){
                                             if (board.square[j][i]->isWhite == true) // galima i same spalva
                                             {
                                                 selected_square1 = board.square[j][i];
+                                                
                                                 board.calculate_legal_moves(selected_square1, board);
                                                 board.check_move(board, selected_square1);
                                                 board.highlightMoves_update();
+                                                /*if (board.Checkmate(board, true)) {
+                                                    std::cout << "CHECKMATE\n";
+                                                }*/
                                             }
                                         }
                                     }
@@ -95,7 +101,10 @@ int main(){
                                                 selected_square1 = board.square[j][i];
                                                 board.calculate_legal_moves(selected_square1, board); // del sito
                                                 board.check_move(board, selected_square1);
-                                                board.highlightMoves_update(); 
+                                                board.highlightMoves_update();
+                                                /*if (board.Checkmate(board, true)) {
+                                                    std::cout << "CHECKMATE\n";
+                                                }*/
                                             }
                                         }
                                     }
@@ -117,11 +126,16 @@ int main(){
                                         board.calculate_legal_moves(selected_square1, board); // isviso galima sita padet ne i loopa o veliau
                                         board.check_move(board, board.square[j][i]);
                                         board.highlightMoves_update();
+                                        /*if (board.Checkmate(board,true)) {
+                                            std::cout << "CHECKMATE\n";
+                                        }*/
                                         break;
                                     }
                                     else
                                     {
+                                        
                                         selected_square2 = board.square[j][i];
+                                        bool colour = selected_square1->isWhite;
                                         /*jeigu returnina false, tada nekeist turn*/
                                         
                                         if(board.move(selected_square1, selected_square2, false, false))
@@ -129,6 +143,10 @@ int main(){
                                         selected_square1->isFirstMove = false;
                                         board.removeHighlighted_moves();
                                         board.removeLegal_moves();
+                                        if (!board.check_moveALL(board, colour)) {
+                                            std::cout << "IT IS A CHECKMATE \n";
+                                            return 69;
+                                        }
                                         selected_square1 = nullptr;
                                         selected_square2 = nullptr;
                                         
@@ -148,6 +166,14 @@ int main(){
         //if (!board.isKingInCheck(board, false)) {
         //    //std::cout << "!KING IN CHECK\n";
         //}
+
+        
+        /*if (board.getCheckmate()) {
+            std::cerr << "CHECKMATE";
+            return 69;
+        }*/
+     /*   board.HASLEGALMOVES(board);*/
+        
     window.clear(sf::Color::Black);
     window.draw(board_sprite);
     for (int i = 0; i < 8; ++i)

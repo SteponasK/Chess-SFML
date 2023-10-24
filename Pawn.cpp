@@ -35,8 +35,8 @@ std::vector<std::pair<int, int>>  Pawn::legal_movesWhite(const Board& tempBoard)
     if (previousMove.first.isPawn && previousMove.first.y == 1
         && previousMove.second.y == 3) {
         if (y == 3) {
-            if ((x - 1 < 8 && x - 1 >= 0 && x - 1 == previousMove.second.x) ||
-                (x + 1 < 8 && x + 1 >= 0 && x + 1 == previousMove.second.x)) {
+            if ((x - 1 < 8 && x - 1 >= 0 && (x - 1 == previousMove.second.x)) ||
+                (x + 1 < 8 && x + 1 >= 0 && (x + 1 == previousMove.second.x))) {
                 legalMoves.push_back(std::make_pair(previousMove.second.x, previousMove.second.y-1));
             }
         }  
@@ -72,8 +72,8 @@ std::vector<std::pair<int, int>>  Pawn::legal_movesBlack(const Board& tempBoard)
     if (previousMove.first.isPawn && previousMove.first.y == 6
         && previousMove.second.y == 4) {
         if (y == 4) {
-            if ((x - 1 < 8 && x - 1 >= 0 && x - 1 == previousMove.second.x) ||
-                (x + 1 < 8 && x + 1 >= 0 && x + 1 == previousMove.second.x)) {
+            if ((x - 1 < 8 && x - 1 >= 0 && (x - 1 == previousMove.second.x)) ||
+                (x + 1 < 8 && x + 1 >= 0 && (x + 1 == previousMove.second.x))) {
                 legalMoves.push_back(std::make_pair(previousMove.second.x, previousMove.second.y+1));
             }
         }

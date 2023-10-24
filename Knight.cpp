@@ -51,5 +51,6 @@ std::vector<std::pair<int, int>>  Knight::legal_movesBlack(const Board& tempBoar
         }
     }
     //std::cout << "knight move fnc called black\n";
+
     return legalMoves;
 }

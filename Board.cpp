@@ -163,6 +163,11 @@ public:
     const int numRows = 8;
     const int numCols = 8;
     std::array<std::array<std::shared_ptr<Piece>, 8>, 8 > square;
+    bool checkmate = false;
+    bool getCheckmate() const {
+        
+        return checkmate;
+    }
 
     bool can_castle(Board board,int kingX, int destinationX, bool isWhite) {
         int kingY = (isWhite ? 7 : 0);
@@ -179,13 +184,41 @@ public:
             }
             tempBoard.square[kingX_default][kingY] = std::make_shared<King>(kingX_default, kingY, isWhite, false, pieceTextures.w_king_text);
             tempBoard.square[kingX][kingY] = std::make_shared<King>(kingX, kingY, isWhite, false, pieceTextures.w_king_text);
-            if (isKingInCheck(tempBoard, isWhite)){
+            
+            if (isKingInCheck(tempBoard, isWhite, tempBoard.checkmate)){
+
                 return false;
+
             }
         }
         
 
         return true;
+    }
+    bool check_moveALL(Board &tempBOARD, bool colour) {
+        Board temp(tempBOARD);
+        bool flag = false;
+        int count = 0;
+        for (int i = 0; i < 8; ++i) {
+            for (int j = 0; j < 8; ++j) {
+                if ((square[j][i]->isWhite != colour) && !square[j][i]->isEmpty) {
+                    temp.calculate_legal_moves(square[j][i], temp);
+                    if (check_move(temp, square[j][i])) {
+                        flag = check_move(temp, square[j][i]);
+                            if (flag) {
+                                std::cout << "flag = good";
+                                return true;
+                        }
+                    }// turi  moves
+                      
+                }
+                
+
+            }
+        }
+        std::cout << "returning false";
+       // std::cout << "\ncount is: " << count << std::endl;
+        return flag;
     }
     bool check_move(Board &board, std::shared_ptr<Piece> piece/*, std::shared_ptr<Piece> destination*/)
     { // Function to check if move is legal
@@ -193,7 +226,7 @@ public:
      
         std::vector<std::shared_ptr<Piece>> legalMoves_copy;
         system("CLS");
-        for (auto destination : legalMOVES)
+        for (auto destination : board.legalMOVES)
         {
             
             std::cout << "checking the move\n";
@@ -207,6 +240,7 @@ public:
                     legalMoves_copy.push_back(destination);
                 }
                 continue;
+                std::cout << "CONTINUOED";
             }
             tempBoard.calculate_legal_moves(tempPiece, tempBoard);
            // std::cout << "check_move fnc tmepboard legal move size: " << tempBoard.legalMOVES.size() << std::endl;
@@ -218,7 +252,7 @@ public:
             // if (tempPiece->isWhite) {
               //  tempBoard.WKingX = 
            // }
-            if (!isKingInCheck(tempBoard, tempPiece->isWhite))
+            if (!isKingInCheck(tempBoard, tempPiece->isWhite, tempBoard.checkmate))
             {
                 std::cout << "NOT IN CHECK";
                 legalMoves_copy.push_back(destination);
@@ -226,25 +260,37 @@ public:
             else {
                 std::cout << "King in check!\n";
             }
+
             //legalMoves_copy.push_back(destination);
         }
         
-        legalMOVES = legalMoves_copy;
+        board.legalMOVES = legalMoves_copy;
+        if (!legalMoves_copy.empty()) {
+            std::cout << "\nMove yra, returniname true\n";
+            return true;
+        }
+        else {
+            return false;
+        }
+          //  std::cout << "DEJA YRA MOVES\n";
+        // paejus reiktu padaryti funckija ar yra legalmoves, taip pat kaip cia.
+        // dabar surandame ar checkmate, tik paspaudus ant checkmated spalvos figureles.
 
-        return true; // do smth with this
+       // return true; // do smth with this
     }
     void controlledSquaresBlack() {}
     void controlledSquaresWhite() {}
-    bool isKingInCheck(Board board, bool king_color) // kazkas blogai su currentpiece, neduoda legal moves
+    bool isKingInCheck(Board board, bool king_color, bool& mate) // kazkas blogai su currentpiece, neduoda legal moves
     {// Check implementation needed
         Board tempBoard(board);
+        bool check = false;
+         mate = false;
       //  std::cout << "\n\n\n\n\n\n\n\niskingincheck called\n";
      //  std::cout << "FUNCTION CALLED\n";
         for (int i = 0; i < 8; ++i) {
             for (int j = 0; j < 8; ++j) {
                 std::shared_ptr<Piece> currentPiece = tempBoard.square[j][i];
-                if (!tempBoard.square[j][i]) {
-                   // std::cout << "iskingincheck square is nullptr\n";
+                if (!tempBoard.square[j][i]) {;
                 }
                 if (currentPiece->isKing) {
                     if (currentPiece->isWhite) {
@@ -275,30 +321,30 @@ public:
                     std::vector<std::pair<int, int>>  opponentMoves;
 
                     tempBoard.calculate_legal_moves(currentPiece, tempBoard);
-                   // std::cout << "legalmove size: " << tempBoard.legalMOVES.size() << std::endl;
                     for (auto move : tempBoard.legalMOVES)
                     {
-                        //std::cout << "ciklinu";
                         if (currentPiece->isWhite)
                         {
-                            /*std::cout << "Bmove x  y: " << move->x << ' ' << move->y
-                                << "   king x y:" << tempBoard.BKingX << ' ' << tempBoard.BKingY << std::endl;*/
                             if (move->x == tempBoard.BKingX && move->y == tempBoard.BKingY)
-                                return true;
+                                check = true;
+                            else
+                                mate = false;
                         }
                         else
                         {
-                            /*std::cout << "Wmove x  y: " << move->x << ' ' << move->y
-                                << "   king x y:" << tempBoard.WKingX << ' ' << tempBoard.WKingY << std::endl;*/
                             if (move->x == tempBoard.WKingX && move->y == tempBoard.WKingY)
-                                return true;
+                                check = true;
+                            else
+                                mate = false;
                         }
+                        if (check && !checkmate)
+                            break;
                         tempBoard.removeLegal_moves();
                     }
                 }
             }
         }
-        return false;
+        return check;
     }
     std::vector<std::pair<Piece, Piece>> Moves;
     std::pair<Piece, Piece> getPreviousMove() const {
@@ -309,14 +355,93 @@ public:
         }
         return Moves.back();
     }
+    std::pair<Piece, Piece> getMove(const int index) const {
 
+        if (Moves.empty()) {
+           
+        }
+        if(Moves.size() > index)
+            return Moves.at(index);
+
+        Piece piece(0, 0, false, false, pieceTextures.empty_square);
+        return std::make_pair(piece, piece);
+    }
+    int getMoveSize() const {
+
+    int size = Moves.size();
+        return size;
+    }
+    // 
+    // 
+    // 
+    // 
+    void HASLEGALMOVES(Board &currboard) {
+        // problema: paskaiciuoja pseudo legal moves, ir tada galvoja kad yra ejimas good.
+        std::cout << "\nFNC CALLED\n";
+        for (int i = 0; i < 8; ++i) {
+            for (int j = 0; j < 8; ++j) {
+                if (square[j][i]->isWhite) {
+                    auto moves = square[j][i]->legal_movesWhite(currboard);
+                    if (!moves.empty()) {
+                       /* std::cout << "LEGAL MOVES HAS THIS PIECE: \n";
+                        std::cout << square[j][i]->x << ' ' << square[j][i]->y <<
+                            "LEGAL MOVES PIECE END \n";*/
+                    }
+                }
+                else {
+                    
+                        auto moves = square[j][i]->legal_movesBlack(currboard);
+                        if (!moves.empty()) {
+                            std::cout << "LEGAL MOVES HAS THIS PIECE: \n";
+                            std::cout << square[j][i]->x << ' ' << square[j][i]->y <<
+                                "LEGAL MOVES PIECE END \n";
+                        }
+                    
+                }
+                
+            }
+        }
+    }
+    bool Checkmate(const Board& currentBoard,bool kingColour, bool &mate)  {
+        for (int i = 0; i < 8; ++i) {
+            for (int j = 0; j < 8; ++j) {
+                auto currentPiece = currentBoard.square[j][i];
+                if ((currentPiece->isWhite == kingColour) && !currentPiece->isEmpty) {
+                    int isWhite = currentPiece->isWhite;
+                   // std::vector<std::pair<Piece, Piece>> currentLegalMoves;
+                    if (isWhite) {
+                       //
+                        auto  currentLegalMoves = currentPiece->legal_movesBlack(currentBoard);
+                        if (!currentLegalMoves.empty())
+                        {
+                            std::cout << "WHIET THERE IS NO CHECKMATE";
+                            return false;
+                        }
+                           
+                    }
+                    else {
+                       auto  currentLegalMoves = currentPiece->legal_movesBlack(currentBoard);
+                       if (!currentLegalMoves.empty())
+                       {
+                           std::cout << "BLACK THERE IS NO CHECKMATE";
+                           return false;
+                       }
+                       
+                    }
+                    
+                }       
+                
+            }
+        }
+        return true;
+    }
     bool move(std::shared_ptr<Piece> piece, std::shared_ptr<Piece> destination, bool castle, bool passant){ // castle passant sutvarkyt dar 
         // piece doesnt change in the array
         for (auto move : legalMOVES)
         {
             if (move == destination)
             {
-                
+                // SITA PADARYT I FNC addMove();
                 Moves.push_back(std::make_pair(*piece, *destination)); // castling logic idk
                 int pieceX = piece->x;
                 int pieceY = piece->y;
@@ -334,11 +459,7 @@ public:
                 destination->isEmpty = false;
                 std::shared_ptr<Piece> finalSquare = square[piece->x][piece->y];
                square[pieceX][pieceY] = std::make_shared<Empty_Square>(pieceX, pieceY, false, true, pieceTextures.w_knight_text);
-               /*    std::cout << ("final square: ");
-                   std::cout << finalSquare->x << ' ' << finalSquare->y <<
-                       std::endl << " is a king?: " << finalSquare->isKing << std::endl <<
-                       "is first move: " << finalSquare->isFirstMove << std::endl;*/
-               
+
                if (finalSquare->isKing && finalSquare->isFirstMove &&
                    (finalSquare->x == 2 || finalSquare->x == 6))// jeigu skiriasi per 2 (castling)
                {
@@ -366,13 +487,45 @@ public:
                    }
                    //W KNIGHT IS EMPTY SQUARE, CHANGE IT O EMPTY SQUARETEXTURE!
                }
+               if (finalSquare->isPawn) {
+                   //std::cout << "IT IS A APAWNH";
+                   auto size = getMoveSize();
+                   //auto size = 0;
+                   //std::pair<Piece, Piece> move;
+                   std::cout << "\nget move SIZE:" << size << std::endl;
+                   if (size >= 2) {
+                       auto move = getMove(size - 2); // Move that we played before this one
+                       std::cout << "x1:" << move.first.x << "x2:" << move.second.x;
+                       std::cout << "y1:" << move.first.y << "y2:" << move.second.y;
+                       //  move->x
+                       
+                       if (finalSquare->isWhite) {
+                           if ((finalSquare->y + 1 == move.second.y) && finalSquare->x == move.second.x) {
+                               if (move.first.y == 1 && move.second.y == 3) {
+                                   square[move.second.x][move.second.y] = std::make_shared<Empty_Square>(move.second.x, move.second.y, false, true, pieceTextures.w_knight_text);
+                                   std::cout << "IT WORKDS";
+                               }
+                           }
+                           std::cout << "NOT WHITE";
+                           
+                       }
+                       else {
+                           std::cout << "WHITE";
+                           if ((finalSquare->y - 1 == move.second.y) && finalSquare->x == move.second.x) {
+                               if (move.first.y == 6 && move.second.y == 4) {
+                                   square[move.second.x][move.second.y] = std::make_shared<Empty_Square>(move.second.x, move.second.y, false, true, pieceTextures.w_knight_text);
+                                   // sitie abu same tai gali but same fnc bet skaiciai nu zodziu idk db
+                                   std::cout << "IT WORKDS";
+                               }
+                           }
+                            
+                       }
+                   }
+               }
+                      // break;
+                     
               // if(finalSquare->isPawn && ) is pawn and capture kreivai and tam langeli nebuvo prieso
                destination->isFirstMove = false;
-               //dar galima pazet jeigu last move buvo pawn move tt, tada cia paejus capture.
-           //    std::cout << "WWUWUW";
-                printf("NICE");
-
-                 //Implement castling logic
 
                 for (int i = 0; i < 8; ++i)
                 {
@@ -392,7 +545,10 @@ public:
                             }
                         }
                     }
+                    
                 }
+
+
               //  std::cout << std::endl << WKingX << WKingY << std::endl;
               //  std::cout << square[WKingX][WKingY]->isWhite;
               //  std::cout << square[WKingX][WKingY]->isKing;
